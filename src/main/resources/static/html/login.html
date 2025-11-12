@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - Sistema de Peajes</title>
+  <link rel="stylesheet" href="./css/logIn.css">
+  <script src="/js/vistaWeb.js"></script>
+</head>
+
+<body>
+  <script src="/js/utilesVista.js"></script>
+  <div class="formulario">
+    <h2>Acceso Propietarios</h2>
+
+    <form id="formLogin" onsubmit="acceder(event)" autocomplete="off">
+      <label for="cedula">Cédula</label>
+      <input type="text" id="cedula" name="cedula" placeholder="Ingrese su cédula" required>
+
+      <label for="contrasenia">Contraseña</label>
+      <input type="password" id="contrasenia" name="contrasenia" placeholder="Ingrese su contraseña" required>
+
+      <button type="submit" >Ingresar</button>
+    </form>
+
+    <p id="mensaje"></p>
+  </div>
+
+  <script>
+    function acceder(event){
+        event.preventDefault();
+        submit("/acceso/loginPropietario", serializarFormulario("formLogin"));
+    }
+
+    async function excepcionDeAplicacion(text) {
+        await mostrar_mensaje(text);
+    }
+
+    function mostrar_loginExitoso(url) {
+      window.location.href = url;
+    }
+  </script>
+
+</body>
+</html>

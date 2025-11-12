@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Tablero del Propietario</title>
+  <link rel="stylesheet" href="./css/tPropietario.css">
+  <script src="/js/vistaWeb.js" defer></script>
+</head>
+
+<body>
+  <script src='/js/utilesVista.js' ></script>
+  <h1>Tablero del Propietario</h1>
+
+  <div id="mensaje" class="mensaje"></div>
+
+  <!-- Datos generales -->
+  <section class="datos">
+    <p id="estado"><strong>Estado:</strong> <span id="estado"></span></p>
+    <p><strong>Saldo actual:</strong> $<span id="saldo"></span></p>
+    <button onclick="actualizarTablero()">Actualizar tablero</button>
+  </section>
+
+  <!-- Vehículos -->
+  <section>
+    <h3>Vehículos registrados</h3>
+    <div id="contenedorVehiculos"></div>
+  </section>
+
+  <!-- Bonificaciones -->
+  <section>
+    <h3>Bonificaciones asignadas</h3>
+    <div id="contenedorBonificaciones"></div>
+  </section>
+
+  <!-- Notificaciones -->
+  <section>
+    <h3>Notificaciones</h3>
+    <div id="contenedorNotificaciones"></div>
+    <button onclick="borrarNotificaciones()">Borrar todas</button>
+  </section>
+
+
+  <script>
+    urlIniciarVista = "/propietarios/vistaConectado";
+    const spnEstado = document.getElementById("estado");
+
+    
+  </script>
+</body>
+</html>

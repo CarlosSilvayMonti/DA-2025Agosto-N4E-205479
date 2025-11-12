@@ -1,0 +1,85 @@
+
+    /* === Layout general === */
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background-color: #f5f7fa;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* === Barra lateral === */
+    .sidebar {
+      width: 250px;
+      background-color: #004aad;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px;
+      box-shadow: 2px 0 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .sidebar label {
+      font-size: 1.1em;
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: block;
+      text-align: center;
+    }
+
+    .sidebar button {
+      background-color: #ff4d4d;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .sidebar button:hover {
+      background-color: #cc0000;
+    }
+
+    /* === Contenido principal === */
+    .content {
+      flex-grow: 1;
+      background-color: white;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    iframe {
+      border: none;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* === Header del contenido opcional === */
+    .header {
+      background-color: #e9eef6;
+      padding: 15px;
+      font-weight: bold;
+      border-bottom: 1px solid #d0d7e2;
+    }
+
+    /* === Adaptabilidad móvil === */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .sidebar label {
+        font-size: 0.9em;
+      }
+
+      .content {
+        height: calc(100vh - 70px);
+      }
+    }

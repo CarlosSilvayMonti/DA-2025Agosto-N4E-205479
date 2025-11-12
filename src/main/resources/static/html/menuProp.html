@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tablero - Propietario</title>
+  <link rel="stylesheet" href="./css/menuProp.css">
+  <script src="/js/vistaWeb.js" ></script>
+</head>
+
+<body>
+  <div class="sidebar">
+    <div>
+      <label id="nombreCompleto"> </label>
+    </div>
+    <button onclick="logout()">Salir</button>
+  </div>
+
+  <div class="content">
+    <iframe id="contenidoFrame" src="tableroPropietario.html"></iframe>
+  </div>
+
+  <script>
+    // ✅ Endpoint para inicialización
+    urlIniciarVista = "/menu/vistaConectada";
+    const spnNombreCompleto = document.getElementById("nombreCompleto");
+
+    // Cambiar contenido del iframe
+    function cargarContenido(pagina) {
+      document.getElementById("contenidoFrame").src = pagina;
+    }
+
+    // Cerrar sesión
+    function logout() {
+      submit("/menu/logout", null);
+    }
+
+    function mostrar_usuarioNoAutenticado(urlDestino){
+        window.location.href = urlDestino;
+    }
+
+    // Mostrar el nombre del usuario autenticado
+    function mostrarUsuarioAutenticado(nombreCompleto) {
+      spnNombreCompleto.innerHTML = nombreCompleto.toUpperCase();
+    }
+
+    function mostrar_nombreCompleto(nombreCompleto) {
+      spnNombreCompleto.innerHTML = "Tablero de " + nombreCompleto.toUpperCase();
+    }
+
+  </script>
+</body>
+</html>
