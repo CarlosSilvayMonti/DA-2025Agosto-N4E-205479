@@ -63,13 +63,13 @@ public class ServicioUsuarios {
         throw new PeajeException(mensajeError);
     }
 
-    public UsuPorpietario buscarPorCedula(String cedula) throws PeajeException {
+    public UsuPorpietario buscarPorCedula(String cedula) {
         for (UsuPorpietario p : propietarios) {
             if (p.getCedula().equals(cedula)) {
                 return p;
             }
         }
-        throw new PeajeException("No existe el propietario con la cédula " + cedula);
+        return null;
     }
 
     public Vehiculo buscarVehiculoDe(UsuPorpietario propietario, String matricula) throws PeajeException {

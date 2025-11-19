@@ -34,16 +34,15 @@ public class ObligatorioDaApplication {
             FachadaServicios fachada = FachadaServicios.getInstancia();
 
             // ================================================================
-            // 🔹 ADMINISTRADORES
-            // ================================================================
+            //ADMINISTRADORES
+            
             UsuAdmin admin1 = new UsuAdmin("123", "admin", "Usuario Administrador");
             UsuAdmin admin2 = new UsuAdmin("87654321", "admin.456", "Admin Secundario");
             fachada.agregar(admin1);
             fachada.agregar(admin2);
 
             // ================================================================
-            // 🔹 CATEGORÍAS
-            // ================================================================
+            //CATEGORÍAS
             Categoria auto = new Categoria("Automóvil");
             Categoria camion = new Categoria("Camión");
             Categoria moto = new Categoria("Moto");
@@ -52,8 +51,7 @@ public class ObligatorioDaApplication {
             fachada.agregar(moto);
 
             // ================================================================
-            // 🔹 PROPIETARIOS Y VEHÍCULOS
-            // ================================================================
+            //PROPIETARIOS Y VEHÍCULOS
             UsuPorpietario p1 = new UsuPorpietario("234", "prop", "Carlos Silva",
                     2000, 500, EstadoPropietario.HABILITADO);
             UsuPorpietario p2 = new UsuPorpietario("98765432", "prop.456", "Laura Gómez",
@@ -72,8 +70,7 @@ public class ObligatorioDaApplication {
 			p1.acreditarVehiculo("SCB5678", 800);*/
 
             // ================================================================
-            // 🔹 PUESTOS Y TARIFAS
-            // ================================================================
+            //PUESTOS Y TARIFAS
             Puesto pto1 = new Puesto("Peaje Pando", "Ruta Interbalnearia km 33");
             Puesto pto2 = new Puesto("Peaje Colonia", "Ruta 1 km 120");
 
@@ -91,8 +88,7 @@ public class ObligatorioDaApplication {
 			fachada.agregar(new Bonificacion("Trabajadores"));
 
             // ================================================================
-			// 🔹 ASIGNACIONES DE BONIFICACIONES A PROPIETARIOS
-			// ================================================================
+			//ASIGNACIONES DE BONIFICACIONES A PROPIETARIOS
 			try {
 				fachada.asignarBonificacion("234", "Frecuentes",   "Peaje Pando");
 				fachada.asignarBonificacion("98765432", "Trabajadores", "Peaje Colonia");
@@ -106,19 +102,15 @@ public class ObligatorioDaApplication {
 
 				
 			// ===============================================================
-			// 🔹 PRECARGA DE TRÁNSITOS (Frecuentes en Pando) 
-			// ================================================================
+			//PRECARGA DE TRÁNSITOS (Frecuentes en Pando) 
 			LocalDate hoy = LocalDate.now();
 
-			// 1) Pando - primer tránsito del día (SIN descuento)
 			fachada.registrarTransito("234", "SBC1234", "Peaje Pando",
 					LocalDateTime.of(hoy, LocalTime.of(8, 0)));
 
-			// 2) Pando - segundo tránsito del día (CON 50% Frecuentes)
 			fachada.registrarTransito("234", "SBC1234", "Peaje Pando",
 					LocalDateTime.of(hoy, LocalTime.of(9, 30)));
 
-			// 3) Colonia - primer tránsito del día en ese puesto (SIN descuento)
 			fachada.registrarTransito("234", "SBC1234", "Peaje Colonia",
 					LocalDateTime.of(hoy, LocalTime.of(11, 0)));
 

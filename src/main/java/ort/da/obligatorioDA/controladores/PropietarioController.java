@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
+import jakarta.servlet.http.HttpSession;
+import ort.da.obligatorioDA.dtos.NotificacionDto;
 import ort.da.obligatorioDA.dtos.PropietarioDto;
 import ort.da.obligatorioDA.excepciones.PeajeException;
 import ort.da.obligatorioDA.modelo.UsuPorpietario;
@@ -25,49 +27,43 @@ public class PropietarioController {
         this.fachada = FachadaServicios.getInstancia();
     }
 
-    // ======================================================
-    // 🔹 Inicialización de la vista del propietario
-    // ======================================================
     @PostMapping("/vistaConectado")
     public List<Respuesta> inicializarVista(
-        @SessionAttribute(name = "usuarioLogueado", required = false) UsuPorpietario propietario) {
+            @SessionAttribute(name = "usuarioLogueado", required = false) UsuPorpietario propietario) {
 
         if (propietario == null) {
-            // Si no hay sesión activa, redirige al login
+
             return Respuesta.lista(
-                new Respuesta("usuarioNoAutenticado", "/html/login.html")
-            );
+                    new Respuesta("usuarioNoAutenticado", "/html/login.html"));
         }
 
         PropietarioDto dto = new PropietarioDto(propietario);
 
         System.out.println(">>> vistaConectado - cedula: " + dto.getCedula()
-        + " bonificacionesDto: " + dto.getBonificaciones().size());
+                + " bonificacionesDto: " + dto.getBonificaciones().size());
 
         try {
             return Respuesta.lista(
-                new Respuesta("estado", dto.getEstado()),
-                new Respuesta("saldo", dto.getSaldoActual()),
-                new Respuesta("vehiculos", FachadaServicios
-                        .getInstancia()
-                        .vehiculosResumen(propietario.getCedula())),
-                new Respuesta("bonificaciones", dto.getBonificaciones()),
-                new Respuesta("transitos", FachadaServicios
-                        .getInstancia()
-                        .transitosDePropietario(propietario.getCedula())),
-                new Respuesta("notificaciones", dto.getNotificaciones()),
-                new Respuesta("mensaje", "Bienvenido " + dto.getNombreCompleto())
-            );
+                    new Respuesta("estado", dto.getEstado()),
+                    new Respuesta("saldo", dto.getSaldoActual()),
+                    new Respuesta("vehiculos", FachadaServicios
+                            .getInstancia()
+                            .vehiculosResumen(propietario.getCedula())),
+                    new Respuesta("bonificaciones", dto.getBonificaciones()),
+                    new Respuesta("transitos", FachadaServicios
+                            .getInstancia()
+                            .transitosDePropietario(propietario.getCedula())),
+                    new Respuesta("notificaciones", dto.getNotificaciones()),
+                    new Respuesta("mensaje", "Bienvenido " + dto.getNombreCompleto()));
         } catch (PeajeException e) {
             return Respuesta.lista(
-                new Respuesta("error", e.getMessage())
-            );
+                    new Respuesta("error", e.getMessage()));
         }
     }
 
-     @PostMapping("/borrarNotificaciones")
+    @PostMapping("/borrarNotificaciones")
     public List<Respuesta> borrarNotificaciones(
-            @SessionAttribute(name = "propietarioLogueado", required = false) UsuPorpietario propietario) {
+        @SessionAttribute(name = "usuarioLogueado", required = false) UsuPorpietario propietario) {
 
         if (propietario == null) {
             return Respuesta.lista(
@@ -75,28 +71,17 @@ public class PropietarioController {
             );
         }
 
-        try {
-            boolean borroAlgo = fachada.borrarNotificaciones(propietario.getCedula());
+        boolean borroAlgo = fachada.borrarNotificaciones(propietario);
+        var notifsActualizadas = fachada.notificacionesDePropietario(propietario.getCedula());
 
-            if (!borroAlgo) {
-                // No había nada para borrar
-                return Respuesta.lista(
-                    new Respuesta("mensaje", "No hay notificaciones para borrar.")
-                );
-            }
+        String msg = borroAlgo
+            ? "Notificaciones eliminadas correctamente."
+            : "No hay notificaciones para borrar.";
 
-            // Si más adelante tenés notificaciones en el DTO, acá las podrías reenviar
-            // PropietarioDto dtoActualizado = new PropietarioDto(propietario);
-
-            return Respuesta.lista(
-                // new Respuesta("notificaciones", dtoActualizado.getNotificaciones()),
-                new Respuesta("mensaje", "Notificaciones eliminadas correctamente.")
-            );
-
-        } catch (PeajeException e) {
-            return Respuesta.lista(
-                new Respuesta("error", e.getMessage())
-            );
-        }
+        return Respuesta.lista(
+            new Respuesta("notificaciones", notifsActualizadas),
+            new Respuesta("mensaje", msg)
+        );
     }
+
 }

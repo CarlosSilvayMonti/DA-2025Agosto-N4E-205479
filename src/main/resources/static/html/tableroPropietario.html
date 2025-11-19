@@ -52,12 +52,8 @@
     <script src="/js/utilesVista.js"></script>
 
     <script>
-        // ✅ Endpoint de inicio (idéntica lógica que en el menú)
+     
         urlIniciarVista = "/propietarios/vistaConectado";
-
-        // ============================================
-        // Funciones "mostrar_" llamadas por vistaWeb.js
-        // ============================================
 
         function mostrar_estado(estado) {
             document.getElementById("estado").textContent = estado.toUpperCase();
@@ -77,7 +73,7 @@
 
 
         function mostrar_tableroPropietario(propietario) {
-            // En caso de que envíes un DTO completo más adelante
+    
             mostrar_estado(propietario.estado);
             mostrar_saldo(propietario.saldoActual);
         }
@@ -95,10 +91,12 @@
             document.getElementById("contenedorBonificaciones").innerHTML = htmlTabla;
         }
 
-        function mostrar_notificaciones(listaNotificaciones) {
-            const htmlTabla = crearTablaDesdeJson(listaNotificaciones);
+        function mostrar_notificaciones(lista) {
+            const htmlTabla = crearTablaDesdeJson(lista);
             document.getElementById("contenedorNotificaciones").innerHTML = htmlTabla;
         }
+
+
 
         async function borrarNotificaciones() {
             const confirmar = await mostrarConfirmacion("¿Desea borrar todas las notificaciones?");

@@ -159,18 +159,16 @@ public class FachadaServicios {
                 .collect(Collectors.toList());
     }
 
-    // En FachadaServicios
-
-    public List<NotificacionDto> notificacionesDePropietario(String cedula) throws PeajeException {
+    public List<NotificacionDto> notificacionesDePropietario(String cedula) {
         UsuPorpietario p = sPropietarios.buscarPorCedula(cedula);
+
         return sNotificaciones.obtenerNotificaciones(p)
                 .stream()
                 .map(NotificacionDto::new)
                 .collect(Collectors.toList());
     }
 
-    public boolean borrarNotificaciones(String cedula) throws PeajeException {
-        UsuPorpietario p = sPropietarios.buscarPorCedula(cedula);
+    public boolean borrarNotificaciones(UsuPorpietario p) {
         return sNotificaciones.borrarNotificaciones(p);
     }
 
@@ -220,7 +218,7 @@ public class FachadaServicios {
 
         // registrar notificación SIEMPRE (según CU)
         if (sNotificaciones != null) {
-            sNotificaciones.registrarNotificacionCambioEstado(propietario, nuevoEstado);
+            sNotificaciones.registrarNotificacionCambioEstado(propietario, nuevoEstado, null);
         }
 
         // devolver DTO actualizado
