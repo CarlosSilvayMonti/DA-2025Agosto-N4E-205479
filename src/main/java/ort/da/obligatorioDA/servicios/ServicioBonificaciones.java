@@ -43,28 +43,29 @@ public class ServicioBonificaciones {
         throw new PeajeException("No existe la bonificación: " + nombre);
     }
 
-    public void asignarBonificacion(UsuPorpietario propietario, Bonificacion bonificacion, Puesto puesto) throws PeajeException {
+    public void asignarBonificacion(UsuPorpietario propietario, Bonificacion bonificacion, Puesto puesto)
+            throws PeajeException {
         if (propietario == null || bonificacion == null || puesto == null) {
             throw new PeajeException("Datos incompletos para asignar bonificación");
         }
-        
+
         boolean yaAsignada = propietario.getBonificacionesAsignadas().stream()
-            .anyMatch(ba -> ba.getBonificacion().getNombre().equalsIgnoreCase(bonificacion.getNombre())
-                         && ba.getPuesto().equals(puesto));
-        
+                .anyMatch(ba -> ba.getBonificacion().getNombre().equalsIgnoreCase(bonificacion.getNombre())
+                        && ba.getPuesto().equals(puesto));
+
         if (yaAsignada) {
             throw new PeajeException("La bonificación ya está asignada a este propietario para el puesto especificado");
         }
 
         propietario.getBonificacionesAsignadas().add(
-            new BonificacionAsignada(bonificacion, puesto, new java.util.Date())
-        );
-        
+                new BonificacionAsignada(bonificacion, puesto, new java.util.Date()));
+
     }
 
     public List<String> nombresBonificaciones() {
         return bonificaciones.stream().map(Bonificacion::getNombre).toList();
     }
+
 
 
 }

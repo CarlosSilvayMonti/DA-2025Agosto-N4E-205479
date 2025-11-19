@@ -212,11 +212,19 @@ public class FachadaServicios {
         return sPuestos.getPuestos();
     }
 
-    public List<BonificacionAsignadaDto> bonificacionesDePropietario(String cedula) throws PeajeException {
-        return sBonificaciones.obtenerBonificacionesAsignadas(cedula)
-                .stream()
-                .map(BonificacionAsignadaDto::new)
-                .collect(Collectors.toList());
+    public PropietarioDto cambiarEstadoPropietario(String cedula, EstadoPropietario nuevoEstado) throws PeajeException {
+        UsuPorpietario propietario = sPropietarios.buscarPorCedula(cedula);
+        EstadoPropietario estadoAnterior = propietario.getEstado();
+
+        sPropietarios.cambiarEstado(cedula, nuevoEstado);
+
+        // registrar notificación SIEMPRE (según CU)
+        if (sNotificaciones != null) {
+            sNotificaciones.registrarNotificacionCambioEstado(propietario, nuevoEstado);
+        }
+
+        // devolver DTO actualizado
+        return new PropietarioDto(propietario);
     }
 
 }

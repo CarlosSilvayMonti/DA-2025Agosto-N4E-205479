@@ -17,6 +17,7 @@ import ort.da.obligatorioDA.modelo.UsuAdmin;
 
 
 @RestController
+@Scope("session")
 @RequestMapping("/menuAdmin")
 public class ControladorMenuAdmin {
 

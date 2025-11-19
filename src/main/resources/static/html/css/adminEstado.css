@@ -1,0 +1,173 @@
+
+body.page-admin-estado {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f3f6fb;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  color: #333;
+}
+
+.panel-estado {
+  background-color: #fff;
+  padding: 25px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  max-width: 900px;
+  width: 100%;
+}
+
+.panel-estado h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #0056d6;
+  text-align: center;
+}
+
+/* ============================
+   MENSAJES
+   ============================ */
+.mensaje {
+  margin-bottom: 15px;
+  font-weight: 600;
+  text-align: center;
+  color: #c0392b;
+}
+
+/* ============================
+   FORM BUSCAR PROPIETARIO
+   ============================ */
+.form-buscar-propietario {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+  align-items: flex-end;
+}
+
+.form-buscar-propietario label {
+  font-weight: 600;
+}
+
+.form-buscar-propietario input[type="text"] {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  min-width: 180px;
+}
+
+.form-buscar-propietario button {
+  padding: 9px 18px;
+  border-radius: 6px;
+  border: none;
+  background-color: #0056d6;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.25s, transform 0.1s;
+}
+
+.form-buscar-propietario button:hover {
+  background-color: #0041a6;
+  transform: translateY(-1px);
+}
+
+/* ============================
+   SECCIÓN DATOS PROPIETARIO
+   ============================ */
+.seccion-datos-prop {
+  background-color: #f9fbff;
+  border-radius: 10px;
+  padding: 15px 18px;
+  border: 1px solid #dde5f3;
+  margin-bottom: 20px;
+}
+
+.seccion-datos-prop h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #0056d6;
+  font-size: 16px;
+}
+
+.seccion-datos-prop p {
+  margin: 4px 0;
+}
+
+/* ============================
+   SECCIÓN CAMBIO DE ESTADO
+   ============================ */
+.seccion-estado {
+  background-color: #fdfefe;
+  border-radius: 10px;
+  padding: 15px 18px;
+  border: 1px solid #e1e6f0;
+  margin-bottom: 20px;
+}
+
+.seccion-estado h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #0056d6;
+  font-size: 16px;
+}
+
+.seccion-estado label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.seccion-estado select {
+  width: 100%;
+  max-width: 260px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.seccion-estado button {
+  padding: 9px 18px;
+  border-radius: 6px;
+  border: none;
+  background-color: #28a745;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.25s, transform 0.1s;
+}
+
+.seccion-estado button:hover {
+  background-color: #218838;
+  transform: translateY(-1px);
+}
+
+/* ============================
+   TABLAS (si mostrás algo en tabla)
+   ============================ */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+thead {
+  background-color: #0056d6;
+  color: #fff;
+}
+
+th, td {
+  padding: 8px 10px;
+  border: 1px solid #dde4f2;
+  text-align: left;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f5f7fc;
+}

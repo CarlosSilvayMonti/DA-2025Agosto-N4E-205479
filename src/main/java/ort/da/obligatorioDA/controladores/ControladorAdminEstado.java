@@ -1,34 +1,48 @@
 package ort.da.obligatorioDA.controladores;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.context.annotation.Scope;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
-import ort.da.obligatorioDA.dtos.BonificacionDto;
-import ort.da.obligatorioDA.dtos.PuestoDto;
 import ort.da.obligatorioDA.dtos.PropietarioDto;
 import ort.da.obligatorioDA.excepciones.PeajeException;
-import ort.da.obligatorioDA.modelo.Usuario;
+import ort.da.obligatorioDA.modelo.EstadoPropietario;
 import ort.da.obligatorioDA.modelo.UsuAdmin;
+import ort.da.obligatorioDA.modelo.Usuario;
+import ort.da.obligatorioDA.modelo.UsuPorpietario;
 import ort.da.obligatorioDA.servicios.fachada.FachadaServicios;
 import ort.da.obligatorioDA.utils.Respuesta;
 
+// DTO muy simple para los estados
+class EstadoPropietarioDto {
+    public String nombre;
+
+    public EstadoPropietarioDto(EstadoPropietario e) {
+        this.nombre = e.toString();
+    }
+}
+
 @RestController
 @Scope("session")
-@RequestMapping("/adminBonificaciones")
-public class ControladorAdminBonificaciones {
+@RequestMapping("/adminEstado")
+public class ControladorAdminEstado {
 
     private final FachadaServicios fachada;
 
-    public ControladorAdminBonificaciones() {
+    public ControladorAdminEstado() {
         this.fachada = FachadaServicios.getInstancia();
     }
 
-    // 1) Inicializar vista: listas de bonificaciones y puestos
+    // 1) Inicializar vista: devolver lista de estados
     @PostMapping("/vistaConectada")
-    public List<Respuesta> vistaConectada(
+    public List<Respuesta> inicializarVista(
         @SessionAttribute(name = "usuarioLogueado", required = false) Usuario usuario) {
 
         if (!(usuario instanceof UsuAdmin)) {
@@ -37,19 +51,12 @@ public class ControladorAdminBonificaciones {
             );
         }
 
-        List<BonificacionDto> bonificaciones = fachada.getBonificacionesDto()
-                .stream()
-                .map(BonificacionDto::new)
-                .collect(Collectors.toList());
-
-        List<PuestoDto> puestos = fachada.getPuestos()
-                .stream()
-                .map(PuestoDto::new)
+        List<EstadoPropietarioDto> estados = Arrays.stream(EstadoPropietario.values())
+                .map(EstadoPropietarioDto::new)
                 .collect(Collectors.toList());
 
         return Respuesta.lista(
-            new Respuesta("bonificaciones", bonificaciones),
-            new Respuesta("puestos", puestos)
+            new Respuesta("estados", estados)
         );
     }
 
@@ -66,11 +73,11 @@ public class ControladorAdminBonificaciones {
         }
 
         try {
-            PropietarioDto dto = fachada.obtenerTableroPropietario(cedula);
+            UsuPorpietario p = fachada.buscarPorCedula(cedula);
+            PropietarioDto dto = new PropietarioDto(p);
 
             return Respuesta.lista(
-                new Respuesta("propietario", dto),
-                new Respuesta("bonificacionesPropietario", dto.getBonificaciones())
+                new Respuesta("propietario", dto)
             );
 
         } catch (PeajeException e) {
@@ -80,13 +87,12 @@ public class ControladorAdminBonificaciones {
         }
     }
 
-    // 3) Asignar bonificación
-    @PostMapping("/asignar")
-    public List<Respuesta> asignar(
+    // 3) Cambiar el estado
+    @PostMapping("/cambiarEstado")
+    public List<Respuesta> cambiarEstado(
         @SessionAttribute(name = "usuarioLogueado", required = false) Usuario usuario,
         @RequestParam String cedula,
-        @RequestParam(required = false) String nombreBonificacion,
-        @RequestParam(required = false) String nombrePuesto) {
+        @RequestParam String nuevoEstado) {
 
         if (!(usuario instanceof UsuAdmin)) {
             return Respuesta.lista(
@@ -95,23 +101,20 @@ public class ControladorAdminBonificaciones {
         }
 
         try {
-            if (nombreBonificacion == null || nombreBonificacion.isBlank()) {
-                throw new PeajeException("Debe especificar una bonificación");
-            }
-            if (nombrePuesto == null || nombrePuesto.isBlank()) {
-                throw new PeajeException("Debe especificar un puesto");
-            }
+            EstadoPropietario estadoNuevo = EstadoPropietario.valueOf(nuevoEstado);
 
-            fachada.asignarBonificacion(cedula, nombreBonificacion, nombrePuesto);
-
-            // refresco datos del propietario
-            PropietarioDto dto = fachada.obtenerTableroPropietario(cedula);
+            PropietarioDto dtoActualizado = fachada.cambiarEstadoPropietario(cedula, estadoNuevo);
 
             return Respuesta.lista(
-                new Respuesta("bonificacionesPropietario", dto.getBonificaciones()),
-                new Respuesta("mensaje", "Bonificación asignada correctamente.")
+                new Respuesta("propietario", dtoActualizado),
+                new Respuesta("mensaje", "Estado cambiado correctamente a " + estadoNuevo)
             );
 
+        } catch (IllegalArgumentException ex) {
+            // valueOf falló
+            return Respuesta.lista(
+                new Respuesta("mensaje", "Estado inválido: " + nuevoEstado)
+            );
         } catch (PeajeException e) {
             return Respuesta.lista(
                 new Respuesta("mensaje", e.getMessage())

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Menú Administrador</title>
-    <link rel="stylesheet" href="./css/menuProp.css">
+    <link rel="stylesheet" href="./css/menuAdmin.css">
     <script src="/js/vistaWeb.js"></script>
 </head>
 
@@ -17,9 +17,12 @@
             <span id="nombreCompleto"></span>
         </div>
 
-        <button onclick="cargarContenido('/html/emularTransito.html')">Emular tránsito</button>
-        <button onclick="cargarContenido('/html/asignarBonificacion.html')">Asignar bonificaciones</button>
-        <button onclick="cargarContenido('cambiarEstado.html')">Cambiar estado propietario</button>
+        <nav class="sidebar-menu">
+            <button class="btn-menu" onclick="cargarContenido('/html/emularTransito.html')">Emular tránsito</button>
+            <button class="btn-menu" onclick="cargarContenido('/html/asignarBonificacion.html')">Asignar bonificaciones</button>
+            <button class="btn-menu" onclick="cargarContenido('/html/adminEstado.html')">Cambiar estado propietario</button>
+        </nav>
+
         <button onclick="logout()">Salir</button>
     </div>
 
@@ -48,6 +51,15 @@
         function mostrar_nombreCompleto(nombreCompleto) {
             spnNombreCompleto.innerHTML = "Menú administrador - " + nombreCompleto.toUpperCase();
         }
+
+        async function mostrar_mensaje(texto) {
+            await mostrarMensaje(texto);
+        }
+
+        async function excepcionDeAplicacion(texto) {
+            await mostrarMensaje(texto);
+        }
+
     </script>
 </body>
 

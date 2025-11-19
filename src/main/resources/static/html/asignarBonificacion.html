@@ -4,9 +4,11 @@
   <meta charset="UTF-8">
   <title>Asignar bonificación</title>
   <link rel="stylesheet" href="./css/adminBonificaciones.css">
+  <!-- vistaWeb SIEMPRE en el head -->
   <script src="/js/vistaWeb.js"></script>
 </head>
 <body class="page-asignar-bonificacion">
+  <!-- utilesVista SIEMPRE al inicio del body -->
   <script src="/js/utilesVista.js"></script>
 
   <div class="panel">
@@ -17,12 +19,14 @@
     <!-- Listado de bonificaciones -->
     <section>
       <h3>Bonificaciones definidas</h3>
+      <!-- acá se va a renderizar un <select> dinámico -->
       <div id="contenedorBonificaciones"></div>
     </section>
 
     <!-- Listado de puestos -->
     <section>
       <h3>Puestos</h3>
+      <!-- acá se va a renderizar un <select> dinámico -->
       <div id="contenedorPuestos"></div>
     </section>
 
@@ -39,54 +43,133 @@
       <div id="bonificacionesPropietario"></div>
     </section>
 
-    <!-- Asignar bonificación (usaremos los selects dinámicos luego) -->
-    <!-- Más adelante: select bonificación, select puesto, botón "Asignar" -->
+    <!-- Asignar bonificación -->
+    <section>
+      <h3>Asignar bonificación seleccionada</h3>
+      <button type="button" onclick="asignarBonificacion()">Asignar</button>
+    </section>
   </div>
 
   <script>
-    // cuando esta vista se carga dentro del iframe
+    // ==========================
+    //  CONFIGURACIÓN INICIAL
+    // ==========================
+    // Hace que vistaWeb.js llame a /adminBonificaciones/vistaConectada al cargar
     urlIniciarVista = "/adminBonificaciones/vistaConectada";
 
-    const formBuscarProp = document.getElementById("formBuscarProp");
-    const divBonifDef = document.getElementById("contenedorBonificaciones");
-    const divPuestos = document.getElementById("contenedorPuestos");
-    const divDatosProp = document.getElementById("datosPropietario");
-    const divBonifProp = document.getElementById("bonificacionesPropietario");
-    const divMensaje = document.getElementById("mensaje");
+    const formBuscarProp  = document.getElementById("formBuscarProp");
+    const divBonifDef     = document.getElementById("contenedorBonificaciones");
+    const divPuestos      = document.getElementById("contenedorPuestos");
+    const divDatosProp    = document.getElementById("datosPropietario");
+    const divBonifProp    = document.getElementById("bonificacionesPropietario");
+    const divMensaje      = document.getElementById("mensaje");
+    const txtCedula       = document.getElementById("cedula");
 
-    // ===== comunicación con controlador (más adelante lo implementamos) =====
+    // ==========================
+    //   HANDLERS mostrar_*
+    //   (coinciden con ids que devuelve el backend)
+    // ==========================
 
-    formBuscarProp.addEventListener("submit", function (e) {
-      e.preventDefault();
-      submit("/adminBonificaciones/buscarPropietario", serializarFormulario("formBuscarProp"));
-    });
+    // id: "bonificaciones"
+    // parámetro: lista de bonificaciones (con campo "nombre")
+    function mostrar_bonificaciones(lista) {
+      if (!Array.isArray(lista)) {
+        console.warn("bonificaciones no es un array", lista);
+        return;
+      }
 
-    // respuestas esperadas desde el backend:
-    function mostrar_bonificacionesDefinidas(lista) {
-      divBonifDef.innerHTML = crearTablaDesdeJson(lista);
+      // Creamos un <select> usando crearListaDesdeJson
+      divBonifDef.innerHTML = crearListaDesdeJson({
+        data: lista,
+        campoMostrar: "nombre",
+        campoValor: "nombre",
+        id: "selectBonificacion",
+        multiple: false,
+        mostrarOpcionInicial: true
+      });
     }
 
-    function mostrar_puestosDefinidos(lista) {
-      divPuestos.innerHTML = crearTablaDesdeJson(lista);
+    // id: "puestos"
+    // parámetro: lista de puestos (con campo "nombre")
+    function mostrar_puestos(lista) {
+      if (!Array.isArray(lista)) {
+        console.warn("puestos no es un array", lista);
+        return;
+      }
+
+      divPuestos.innerHTML = crearListaDesdeJson({
+        data: lista,
+        campoMostrar: "nombre",
+        campoValor: "nombre",
+        id: "selectPuesto",
+        multiple: false,
+        mostrarOpcionInicial: true
+      });
     }
 
-    function mostrar_datosPropietario(dto) {
+    // id: "propietario"
+    // parámetro: normalmente un PropietarioDto:
+    // { cedula, nombreCompleto, estado, bonificaciones: [...] }
+    function mostrar_propietario(dto) {
+      if (!dto) {
+        divDatosProp.innerHTML = "";
+        divBonifProp.innerHTML = "";
+        return;
+      }
+
       divDatosProp.innerHTML =
         "<p><strong>Nombre:</strong> " + dto.nombreCompleto +
         " – <strong>Estado:</strong> " + dto.estado + "</p>";
+
+      const listaBonif = dto.bonificaciones || dto.bonificacionesAsignadas || [];
+      if (Array.isArray(listaBonif) && listaBonif.length > 0) {
+        divBonifProp.innerHTML = crearTablaDesdeJson(listaBonif);
+      } else {
+        divBonifProp.innerHTML = "<p>El propietario no tiene bonificaciones asignadas.</p>";
+      }
     }
 
-    function mostrar_bonificacionesPropietario(lista) {
-      divBonifProp.innerHTML = crearTablaDesdeJson(lista);
-    }
-
+    // id: "mensaje"
     async function mostrar_mensaje(texto) {
       divMensaje.textContent = texto;
       await mostrarMensaje(texto);
     }
 
+    // ==========================
+    //   ACCIONES DEL USUARIO
+    // ==========================
+
+    // Buscar propietario por cédula
+    formBuscarProp.addEventListener("submit", function (e) {
+      e.preventDefault();
+      submit("/adminBonificaciones/buscarPropietario", serializarFormulario("formBuscarProp"));
+    });
+
+    // Asignar bonificación al propietario
+    function asignarBonificacion() {
+      const cedula = txtCedula.value.trim();
+      const selBonif  = document.getElementById("selectBonificacion");
+      const selPuesto = document.getElementById("selectPuesto");
+
+      const nombreBonificacion = selBonif ? selBonif.value : "";
+      const nombrePuesto       = selPuesto ? selPuesto.value : "";
+
+      const params =
+        "cedula=" + encodeURIComponent(cedula) +
+        "&nombreBonificacion=" + encodeURIComponent(nombreBonificacion) +
+        "&nombrePuesto=" + encodeURIComponent(nombrePuesto);
+
+      submit("/adminBonificaciones/asignar", params);
+    }
+
+    // Usuario no autenticado → volver al login
     function mostrar_usuarioNoAutenticado(urlDestino) {
       window.location.href = urlDestino;
+    }
+
+    // Manejo genérico de excepciones desde el backend
+    async function excepcionDeAplicacion(texto) {
+      await mostrarMensaje(texto);
     }
   </script>
 </body>
