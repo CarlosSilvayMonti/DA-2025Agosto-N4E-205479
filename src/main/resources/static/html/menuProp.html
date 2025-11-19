@@ -21,16 +21,16 @@
   </div>
 
   <script>
-    // ✅ Endpoint para inicialización
+   
     urlIniciarVista = "/menu/vistaConectada";
+
     const spnNombreCompleto = document.getElementById("nombreCompleto");
 
-    // Cambiar contenido del iframe
+  
     function cargarContenido(pagina) {
       document.getElementById("contenidoFrame").src = pagina;
     }
 
-    // Cerrar sesión
     function logout() {
       submit("/menu/logout", null);
     }
@@ -39,7 +39,6 @@
         window.location.href = urlDestino;
     }
 
-    // Mostrar el nombre del usuario autenticado
     function mostrarUsuarioAutenticado(nombreCompleto) {
       spnNombreCompleto.innerHTML = nombreCompleto.toUpperCase();
     }

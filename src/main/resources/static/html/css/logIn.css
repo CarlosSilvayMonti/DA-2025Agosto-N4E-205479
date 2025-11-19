@@ -1,85 +1,108 @@
-  /* ======= ESTILO GENERAL ======= */
-    body {
-      font-family: "Segoe UI", Arial, sans-serif;
-      background: linear-gradient(135deg, #007bff 0%, #4d94ff 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-      color: #333;
-    }
+/* ======= ESTILO GENERAL ======= */
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: linear-gradient(135deg, #007bff 0%, #4d94ff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;           /* mejor que height fija */
+  margin: 0;
+  color: #333;
+}
 
-    /* ======= CONTENEDOR PRINCIPAL ======= */
-    .formulario {
-      background-color: #fff;
-      padding: 30px 40px;
-      border-radius: 12px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-      width: 100%;
-      max-width: 400px;
-      text-align: center;
-      animation: fadeIn 0.4s ease-in-out;
-    }
+/* ======= CONTENEDOR PRINCIPAL ======= */
+.formulario {
+  background-color: #fff;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+  animation: fadeIn 0.4s ease-in-out;
+  box-sizing: border-box;
+}
 
-    .formulario h2 {
-      color: #0056d6;
-      margin-bottom: 25px;
-      letter-spacing: 0.5px;
-    }
+.formulario h2 {
+  color: #0056d6;
+  margin-bottom: 25px;
+  letter-spacing: 0.5px;
+}
 
-    /* ======= CAMPOS Y BOTÓN ======= */
-    .formulario label {
-      display: block;
-      text-align: left;
-      font-weight: 600;
-      margin: 10px 0 5px;
-    }
+/* ======= CAMPOS ======= */
+.formulario label {
+  display: block;
+  text-align: left;
+  font-weight: 600;
+  margin: 10px 0 5px;
+}
 
-    .formulario input {
-      width: 100%;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 15px;
-      transition: border-color 0.2s;
-    }
+.formulario input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
 
-    .formulario input:focus {
-      border-color: #4d94ff;
-      outline: none;
-    }
+.formulario input:focus {
+  border-color: #4d94ff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(77, 148, 255, 0.25);
+}
 
-    .formulario button {
-      width: 100%;
-      margin-top: 15px;
-      padding: 12px;
-      background-color: #4d94ff;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
+/* ======= BOTONES ======= */
+.botones-login {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;                    /* separación entre botones */
+  margin-top: 15px;
+}
 
-    .formulario button:hover {
-      background-color: #2c6ed5;
-      transform: translateY(-2px);
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
-    }
+.formulario button {
+  width: 100%;
+  padding: 12px;
+  background-color: #4d94ff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
 
-    /* ======= MENSAJE ======= */
-    #mensaje {
-      margin-top: 15px;
-      font-weight: bold;
-      color: #d9534f;
-    }
+/* Estilo alternativo para el botón de admin (opcional) */
+.formulario button.btn-admin {
+  background-color: #28a745;
+}
 
-    /* ======= ANIMACIONES ======= */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-15px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
- 
+.formulario button:hover {
+  filter: brightness(0.95);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* ======= MENSAJE ======= */
+#mensaje {
+  margin-top: 15px;
+  font-weight: bold;
+  color: #d9534f;
+  min-height: 18px;   /* reserva espacio aunque no haya mensaje */
+}
+
+/* ======= ANIMACIONES ======= */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-15px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ======= RESPONSIVE ======= */
+@media (max-width: 480px) {
+  .formulario {
+    margin: 20px;
+    padding: 20px;
+  }
+}

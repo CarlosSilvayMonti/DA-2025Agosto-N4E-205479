@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Asignar bonificación</title>
+  <link rel="stylesheet" href="./css/adminBonificaciones.css">
+  <script src="/js/vistaWeb.js"></script>
+</head>
+<body class="page-asignar-bonificacion">
+  <script src="/js/utilesVista.js"></script>
+
+  <div class="panel">
+    <h2>Asignar bonificación a propietario</h2>
+
+    <div id="mensaje" class="mensaje"></div>
+
+    <!-- Listado de bonificaciones -->
+    <section>
+      <h3>Bonificaciones definidas</h3>
+      <div id="contenedorBonificaciones"></div>
+    </section>
+
+    <!-- Listado de puestos -->
+    <section>
+      <h3>Puestos</h3>
+      <div id="contenedorPuestos"></div>
+    </section>
+
+    <!-- Buscar propietario -->
+    <section>
+      <h3>Buscar propietario</h3>
+      <form id="formBuscarProp" autocomplete="off">
+        <label for="cedula">Cédula:</label>
+        <input type="text" id="cedula" name="cedula" required>
+        <button type="submit">Buscar</button>
+      </form>
+
+      <div id="datosPropietario"></div>
+      <div id="bonificacionesPropietario"></div>
+    </section>
+
+    <!-- Asignar bonificación (usaremos los selects dinámicos luego) -->
+    <!-- Más adelante: select bonificación, select puesto, botón "Asignar" -->
+  </div>
+
+  <script>
+    // cuando esta vista se carga dentro del iframe
+    urlIniciarVista = "/adminBonificaciones/vistaConectada";
+
+    const formBuscarProp = document.getElementById("formBuscarProp");
+    const divBonifDef = document.getElementById("contenedorBonificaciones");
+    const divPuestos = document.getElementById("contenedorPuestos");
+    const divDatosProp = document.getElementById("datosPropietario");
+    const divBonifProp = document.getElementById("bonificacionesPropietario");
+    const divMensaje = document.getElementById("mensaje");
+
+    // ===== comunicación con controlador (más adelante lo implementamos) =====
+
+    formBuscarProp.addEventListener("submit", function (e) {
+      e.preventDefault();
+      submit("/adminBonificaciones/buscarPropietario", serializarFormulario("formBuscarProp"));
+    });
+
+    // respuestas esperadas desde el backend:
+    function mostrar_bonificacionesDefinidas(lista) {
+      divBonifDef.innerHTML = crearTablaDesdeJson(lista);
+    }
+
+    function mostrar_puestosDefinidos(lista) {
+      divPuestos.innerHTML = crearTablaDesdeJson(lista);
+    }
+
+    function mostrar_datosPropietario(dto) {
+      divDatosProp.innerHTML =
+        "<p><strong>Nombre:</strong> " + dto.nombreCompleto +
+        " – <strong>Estado:</strong> " + dto.estado + "</p>";
+    }
+
+    function mostrar_bonificacionesPropietario(lista) {
+      divBonifProp.innerHTML = crearTablaDesdeJson(lista);
+    }
+
+    async function mostrar_mensaje(texto) {
+      divMensaje.textContent = texto;
+      await mostrarMensaje(texto);
+    }
+
+    function mostrar_usuarioNoAutenticado(urlDestino) {
+      window.location.href = urlDestino;
+    }
+  </script>
+</body>
+</html>

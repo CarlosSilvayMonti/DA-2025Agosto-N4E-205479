@@ -1,50 +1,140 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Tablero del Propietario</title>
-  <link rel="stylesheet" href="./css/tPropietario.css">
-  <script src="/js/vistaWeb.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tablero del Propietario</title>
+    <link rel="stylesheet" href="./css/tPropietario.css">
+
+    <!-- ✅ Cargar primero vistaWeb.js -->
+    <script src="/js/vistaWeb.js"></script>
 </head>
 
 <body>
-  <script src='/js/utilesVista.js' ></script>
-  <h1>Tablero del Propietario</h1>
+    <h1>Tablero del Propietario</h1>
 
-  <div id="mensaje" class="mensaje"></div>
+    <div id="mensaje" class="mensaje"></div>
 
-  <!-- Datos generales -->
-  <section class="datos">
-    <p id="estado"><strong>Estado:</strong> <span id="estado"></span></p>
-    <p><strong>Saldo actual:</strong> $<span id="saldo"></span></p>
-    <button onclick="actualizarTablero()">Actualizar tablero</button>
-  </section>
+    <!-- Datos generales -->
+    <section class="datos">
+        <p><strong>Estado:</strong> <span id="estado"></span></p>
+        <p><strong>Saldo actual:</strong> $<span id="saldo"></span></p>
+        <button onclick="actualizarTablero()">Actualizar tablero</button>
+    </section>
 
-  <!-- Vehículos -->
-  <section>
-    <h3>Vehículos registrados</h3>
-    <div id="contenedorVehiculos"></div>
-  </section>
+    <!-- Vehículos -->
+    <section>
+        <h3>Vehículos registrados</h3>
+        <div id="contenedorVehiculos"></div>
+    </section>
 
-  <!-- Bonificaciones -->
-  <section>
-    <h3>Bonificaciones asignadas</h3>
-    <div id="contenedorBonificaciones"></div>
-  </section>
+    <!-- Bonificaciones -->
+    <section>
+        <h3>Bonificaciones asignadas</h3>
+        <div id="contenedorBonificaciones"></div>
+    </section>
 
-  <!-- Notificaciones -->
-  <section>
-    <h3>Notificaciones</h3>
-    <div id="contenedorNotificaciones"></div>
-    <button onclick="borrarNotificaciones()">Borrar todas</button>
-  </section>
+    <section>
+        <h3>Tránsitos realizados</h3>
+        <div id="contenedorTransitos"></div>
+    </section>
 
 
-  <script>
-    urlIniciarVista = "/propietarios/vistaConectado";
-    const spnEstado = document.getElementById("estado");
+    <!-- Notificaciones -->
+    <section>
+        <h3>Notificaciones</h3>
+        <div id="contenedorNotificaciones"></div>
+        <button onclick="borrarNotificaciones()">Borrar todas</button>
+    </section>
 
-    
-  </script>
+
+    <script src="/js/utilesVista.js"></script>
+
+    <script>
+        // ✅ Endpoint de inicio (idéntica lógica que en el menú)
+        urlIniciarVista = "/propietarios/vistaConectado";
+
+        // ============================================
+        // Funciones "mostrar_" llamadas por vistaWeb.js
+        // ============================================
+
+        function mostrar_estado(estado) {
+            document.getElementById("estado").textContent = estado.toUpperCase();
+        }
+
+        function mostrar_saldo(saldo) {
+            document.getElementById("saldo").textContent = parseFloat(saldo).toFixed(2);
+        }
+
+        function mostrar_vehiculos(lista) {
+            document.getElementById("contenedorVehiculos").innerHTML = crearTablaDesdeJson(lista);
+        }
+
+        function mostrar_transitos(lista) {
+            document.getElementById("contenedorNotificaciones").innerHTML = crearTablaDesdeJson(lista);
+        }
+
+
+        function mostrar_tableroPropietario(propietario) {
+            // En caso de que envíes un DTO completo más adelante
+            mostrar_estado(propietario.estado);
+            mostrar_saldo(propietario.saldoActual);
+        }
+
+        function mostrar_bonificaciones(listaBonificaciones) {
+            console.log("Bonificaciones recibidas en la vista:", listaBonificaciones);
+
+            if (!listaBonificaciones || listaBonificaciones.length === 0) {
+                document.getElementById("contenedorBonificaciones").innerHTML =
+                    "<p>Sin bonificaciones asignadas.</p>";
+                return;
+            }
+
+            const htmlTabla = crearTablaDesdeJson(listaBonificaciones);
+            document.getElementById("contenedorBonificaciones").innerHTML = htmlTabla;
+        }
+
+        function mostrar_notificaciones(listaNotificaciones) {
+            const htmlTabla = crearTablaDesdeJson(listaNotificaciones);
+            document.getElementById("contenedorNotificaciones").innerHTML = htmlTabla;
+        }
+
+        async function borrarNotificaciones() {
+            const confirmar = await mostrarConfirmacion("¿Desea borrar todas las notificaciones?");
+            if (confirmar) {
+                submit("/propietarios/borrarNotificaciones", "");
+            }
+        }
+
+        function mostrar_transitos(listaTransitos) {
+            const htmlTabla = crearTablaDesdeJson(listaTransitos);
+            document.getElementById("contenedorTransitos").innerHTML = htmlTabla;
+        }
+
+
+        function mostrar_usuarioNoAutenticado(urlDestino) {
+            window.location.href = urlDestino;
+        }
+
+        function mostrar_mensaje(texto) {
+            mostrarMensaje(texto);
+        }
+
+        function actualizarTablero() {
+            // Reenvía el request para refrescar datos
+            submit("/propietarios/vistaConectado", "");
+        }
+
+
+        async function borrarNotificaciones() {
+            const confirmar = await mostrarConfirmacion("¿Desea borrar todas las notificaciones?");
+            if (confirmar) {
+                submit("/propietarios/borrarNotificaciones", "");
+            }
+        }
+
+    </script>
 </body>
+
 </html>

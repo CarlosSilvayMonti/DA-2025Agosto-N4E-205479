@@ -1,0 +1,157 @@
+/* ======= LAYOUT GENERAL ======= */
+.page-asignar-bonificacion {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f3f5fb;
+  margin: 0;
+  padding: 30px 0;
+  display: flex;
+  justify-content: center;
+  color: #333;
+}
+
+/* ======= CONTENEDOR PRINCIPAL ======= */
+.page-asignar-bonificacion .panel {
+  width: 95%;
+  max-width: 1000px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 25px 30px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+/* ======= TÍTULOS ======= */
+.page-asignar-bonificacion h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #004aad;
+  font-size: 24px;
+  border-bottom: 2px solid #e0e6f5;
+  padding-bottom: 8px;
+}
+
+.page-asignar-bonificacion h3 {
+  margin-top: 25px;
+  margin-bottom: 10px;
+  font-size: 18px;
+  color: #004aad;
+}
+
+/* ======= SECCIONES ======= */
+.page-asignar-bonificacion section {
+  margin-bottom: 20px;
+  padding: 15px 18px;
+  border-radius: 10px;
+  background: #f9fbff;
+  border: 1px solid #e1e6f5;
+}
+
+/* ======= MENSAJE ======= */
+.page-asignar-bonificacion #mensaje {
+  margin-bottom: 15px;
+  font-weight: 600;
+  color: #c0392b;
+}
+
+/* ======= FORM BUSCAR PROPIETARIO ======= */
+.page-asignar-bonificacion form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.page-asignar-bonificacion label {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.page-asignar-bonificacion input[type="text"],
+.page-asignar-bonificacion input[type="number"],
+.page-asignar-bonificacion select {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #cfd6ec;
+  font-size: 14px;
+  min-width: 180px;
+  box-sizing: border-box;
+}
+
+.page-asignar-bonificacion input:focus,
+.page-asignar-bonificacion select:focus {
+  outline: none;
+  border-color: #4d94ff;
+  box-shadow: 0 0 0 2px rgba(77, 148, 255, 0.15);
+}
+
+/* ======= BOTONES ======= */
+.page-asignar-bonificacion button {
+  padding: 9px 16px;
+  border-radius: 6px;
+  border: none;
+  background: #4d94ff;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease,
+    box-shadow 0.1s ease;
+}
+
+.page-asignar-bonificacion button:hover {
+  background: #2c6ed5;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.page-asignar-bonificacion button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* ======= TEXTO / INFO PROPIETARIO ======= */
+#datosPropietario p {
+  margin: 6px 0;
+  font-size: 14px;
+}
+
+/* ======= TABLAS GENERADAS (crearTablaDesdeJson) ======= */
+.page-asignar-bonificacion table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+  font-size: 14px;
+  background: #ffffff;
+}
+
+.page-asignar-bonificacion th,
+.page-asignar-bonificacion td {
+  border: 1px solid #dde3f3;
+  padding: 6px 8px;
+  text-align: left;
+}
+
+.page-asignar-bonificacion th {
+  background: #f0f3ff;
+  font-weight: 600;
+  color: #234;
+}
+
+.page-asignar-bonificacion tr:nth-child(even) td {
+  background: #f8faff;
+}
+
+.page-asignar-bonificacion tr:hover td {
+  background: #eaf2ff;
+}
+
+/* ======= RESPONSIVE ======= */
+@media (max-width: 768px) {
+  .page-asignar-bonificacion .panel {
+    padding: 20px 15px;
+  }
+
+  .page-asignar-bonificacion form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

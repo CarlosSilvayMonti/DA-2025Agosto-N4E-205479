@@ -34,18 +34,15 @@ public class ControladorLogin {
 
         Sesion sesion = FachadaServicios.getInstancia().loginPropietario(cedula, contrasenia);
 
-        sesionHttp.setAttribute("propietarioLogueado", sesion.getProp());
-        sesionHttp.setAttribute("sesionPropietario", sesion);
+        sesionHttp.setAttribute("usuarioLogueado", sesion.getProp());
+        sesionHttp.setAttribute("sesionUsuario", sesion);
 
         return Respuesta.lista(
                 new Respuesta("loginExitoso", "/html/menuProp.html")
         );
     }
 
-    // ================================================
-    // 🔹 LOGIN DE ADMINISTRADORES
-    // ================================================
-    /*@PostMapping("/loginAdministrador")
+    @PostMapping("/loginAdministrador")
     public List<Respuesta> loginAdministrador(
             HttpSession sesionHttp,
             @RequestParam String cedula,
@@ -55,11 +52,11 @@ public class ControladorLogin {
                 .getInstancia()
                 .loginAdministrador(cedula, contrasenia);
 
-        sesionHttp.setAttribute("usuarioAdmin", admin);
+        sesionHttp.setAttribute("usuarioLogueado", admin);
 
         return Respuesta.lista(
                 new Respuesta("mensaje", "Bienvenido " + admin.getNombreCompleto()),
-                new Respuesta("loginExitoso", "html/menuAdministrador.html")
+                new Respuesta("loginExitoso", "/html/menuAdmin.html")
         );
-    }*/
+    }
 }

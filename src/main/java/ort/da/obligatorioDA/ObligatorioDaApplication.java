@@ -3,6 +3,11 @@ package ort.da.obligatorioDA;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+
 import ort.da.obligatorioDA.excepciones.PeajeException;
 import ort.da.obligatorioDA.modelo.Bonificacion;
 import ort.da.obligatorioDA.modelo.Categoria;
@@ -12,6 +17,7 @@ import ort.da.obligatorioDA.modelo.Tarifa;
 import ort.da.obligatorioDA.modelo.UsuAdmin;
 import ort.da.obligatorioDA.modelo.UsuPorpietario;
 import ort.da.obligatorioDA.modelo.Vehiculo;
+import ort.da.obligatorioDA.servicios.ServicioBonificaciones;
 import ort.da.obligatorioDA.servicios.fachada.FachadaServicios;
 
 
@@ -30,7 +36,7 @@ public class ObligatorioDaApplication {
             // ================================================================
             // 🔹 ADMINISTRADORES
             // ================================================================
-            UsuAdmin admin1 = new UsuAdmin("12345678", "administradores.123", "Usuario Administrador");
+            UsuAdmin admin1 = new UsuAdmin("123", "admin", "Usuario Administrador");
             UsuAdmin admin2 = new UsuAdmin("87654321", "admin.456", "Admin Secundario");
             fachada.agregar(admin1);
             fachada.agregar(admin2);
@@ -61,6 +67,10 @@ public class ObligatorioDaApplication {
             fachada.agregar(p1);
             fachada.agregar(p2);
 
+
+			/*p1.acreditarVehiculo("SBC1234", 1200);
+			p1.acreditarVehiculo("SCB5678", 800);*/
+
             // ================================================================
             // 🔹 PUESTOS Y TARIFAS
             // ================================================================
@@ -76,19 +86,49 @@ public class ObligatorioDaApplication {
             fachada.agregar(pto1);
             fachada.agregar(pto2);
 
-            // ================================================================
-            // 🔹 BONIFICACIONES
-            // ================================================================
-            fachada.agregar(new Bonificacion("Exonerados"));
-            fachada.agregar(new Bonificacion("Frecuentes"));
-            fachada.agregar(new Bonificacion("Trabajadores"));
+			fachada.agregar(new Bonificacion("Exonerados"));
+			fachada.agregar(new Bonificacion("Frecuentes"));
+			fachada.agregar(new Bonificacion("Trabajadores"));
 
-            System.out.println("✅ Precarga completada correctamente.");
+            // ================================================================
+			// 🔹 ASIGNACIONES DE BONIFICACIONES A PROPIETARIOS
+			// ================================================================
+			try {
+				fachada.asignarBonificacion("234", "Frecuentes",   "Peaje Pando");
+				fachada.asignarBonificacion("98765432", "Trabajadores", "Peaje Colonia");
+			} catch (PeajeException e) {
+				System.out.println("⚠️ Error asignando bonificaciones: " + e.getMessage());
+			}
+
+			UsuPorpietario p111 = fachada.buscarPorCedula("234");
+			System.out.println("Bonificaciones de p1 luego de precarga: " 
+					+ p111.getBonificacionesAsignadas().size());
+
+				
+			// ===============================================================
+			// 🔹 PRECARGA DE TRÁNSITOS (Frecuentes en Pando) 
+			// ================================================================
+			LocalDate hoy = LocalDate.now();
+
+			// 1) Pando - primer tránsito del día (SIN descuento)
+			fachada.registrarTransito("234", "SBC1234", "Peaje Pando",
+					LocalDateTime.of(hoy, LocalTime.of(8, 0)));
+
+			// 2) Pando - segundo tránsito del día (CON 50% Frecuentes)
+			fachada.registrarTransito("234", "SBC1234", "Peaje Pando",
+					LocalDateTime.of(hoy, LocalTime.of(9, 30)));
+
+			// 3) Colonia - primer tránsito del día en ese puesto (SIN descuento)
+			fachada.registrarTransito("234", "SBC1234", "Peaje Colonia",
+					LocalDateTime.of(hoy, LocalTime.of(11, 0)));
+
+            System.out.println("Precarga completada correctamente.");
+
+			System.out.println("Bonificaciones cargadas: " + fachada.nombresBonificaciones());
+
 
         } catch (PeajeException e) {
-            System.out.println("⚠️ Error cargando datos de prueba: " + e.getMessage());
+            System.out.println("Error cargando datos de prueba: " + e.getMessage());
         }
     }
-
-
 }

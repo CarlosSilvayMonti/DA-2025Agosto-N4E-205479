@@ -1,0 +1,147 @@
+/* ====== ESTILO GENERAL ====== */
+body.page-emular-transito {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f3f5fb;
+  margin: 0;
+  padding: 20px;
+  color: #222;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #244f88;
+}
+
+/* ====== MENSAJE SUPERIOR ====== */
+.mensaje {
+  text-align: center;
+  margin-bottom: 15px;
+  font-weight: 600;
+  color: #b3261e;
+}
+
+/* ====== PANEL / SECCIONES ====== */
+.panel {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin: 12px auto;
+  max-width: 900px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.panel h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  padding-bottom: 4px;
+  border-bottom: 2px solid #244f88;
+  color: #244f88;
+}
+
+/* ====== FORMULARIO EMULAR TRÁNSITO ====== */
+#formEmular {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 20px;
+  align-items: center;
+}
+
+#formEmular label {
+  font-weight: 600;
+}
+
+#formEmular input {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #c5c9d3;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+#formEmular input:focus {
+  outline: none;
+  border-color: #4d94ff;
+  box-shadow: 0 0 0 2px rgba(77, 148, 255, 0.15);
+}
+
+#formEmular button[type="submit"] {
+  grid-column: 1 / -1;
+  margin-top: 6px;
+  padding: 10px 0;
+  background-color: #244f88;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease,
+    box-shadow 0.2s ease;
+}
+
+#formEmular button[type="submit"]:hover {
+  background-color: #325fa3;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+#formEmular button[type="submit"]:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* ====== SELECT PUESTOS (crearListaDesdeJson) ====== */
+#contenedorPuestos select {
+  width: 100%;
+  max-width: 400px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #c5c9d3;
+  font-size: 14px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+#contenedorPuestos select:focus {
+  outline: none;
+  border-color: #4d94ff;
+  box-shadow: 0 0 0 2px rgba(77, 148, 255, 0.15);
+}
+
+/* ====== TABLAS GENERADAS (tarifas, etc.) ====== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+thead {
+  background: #244f88;
+  color: #ffffff;
+}
+
+th,
+td {
+  padding: 8px 10px;
+  border: 1px solid #dde1eb;
+  text-align: left;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f5f7fb;
+}
+
+tbody tr:hover {
+  background-color: #e8f1ff;
+}
+
+/* ====== RESULTADO DEL TRÁNSITO ====== */
+#resultadoTransito p {
+  margin: 4px 0;
+}
+
+#resultadoTransito p strong {
+  color: #244f88;
+}

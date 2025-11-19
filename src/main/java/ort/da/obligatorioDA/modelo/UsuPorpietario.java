@@ -3,11 +3,24 @@ package ort.da.obligatorioDA.modelo;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
+import ort.da.obligatorioDA.excepciones.PeajeException;
+import ort.da.obligatorioDA.modelo.Vehiculo;
+
 public class UsuPorpietario extends Usuario{
+    @Getter @Setter
     private double saldoActual;
+    @Getter @Setter
     private double saldoMinimo;
+    @Getter @Setter
     private EstadoPropietario estado;
+    @Getter @Setter
     private List<Vehiculo> vehiculos = new ArrayList<>();
+    @Getter @Setter
+    private List<BonificacionAsignada> bonificacionesAsignadas = new ArrayList<>();
+    @Getter @Setter
+    private List<Notificacion> notificaciones = new ArrayList<>();
 
     public UsuPorpietario(String cedula, String contrasenia, String nombreCompleto, double saldoActual, double saldoMinimo, EstadoPropietario estado) {
         super(cedula, contrasenia, nombreCompleto);
@@ -21,33 +34,22 @@ public class UsuPorpietario extends Usuario{
         return "Propietario";
     }
 
-    public double getSaldoActual() {
-        return saldoActual;
+    public void acreditarSaldo(double monto) {
+        this.saldoActual += monto;
     }
 
-    public void setSaldoActual(double saldoActual) {
-        this.saldoActual = saldoActual;
+    public void debitarSaldo(double monto) {
+        this.saldoActual -= monto;
     }
 
-    public double getSaldoMinimo() {
-        return saldoMinimo;
-    }
 
-    public EstadoPropietario getEstado() {
-        return estado;
-    }
-
-    public void setEstado(EstadoPropietario estado) {
-        this.estado = estado;
-    }
-
-    public List<Vehiculo> getVehiculos() {
-        return vehiculos;
-    }
-
-    public void agregarVehiculo(Vehiculo v) {
-        vehiculos.add(v);
-    }
+    /*public void acreditarVehiculo(String matricula, double monto) throws PeajeException {
+        Vehiculo v = vehiculos.stream()
+            .filter(veh -> veh.getMatricula().equalsIgnoreCase(matricula))
+            .findFirst()
+            .orElseThrow(() -> new PeajeException("Vehículo no encontrado"));
+        v.agregarSaldo(monto);
+    }*/
 
     @Override
     public String toString() {

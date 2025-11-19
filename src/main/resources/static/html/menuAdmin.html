@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Menú Administrador</title>
+    <link rel="stylesheet" href="./css/menuProp.css">
+    <script src="/js/vistaWeb.js"></script>
+</head>
+
+<body>
+    <script src="/js/utilesVista.js"></script>
+
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <span>Administrador</span>
+            <span id="nombreCompleto"></span>
+        </div>
+
+        <button onclick="cargarContenido('/html/emularTransito.html')">Emular tránsito</button>
+        <button onclick="cargarContenido('/html/asignarBonificacion.html')">Asignar bonificaciones</button>
+        <button onclick="cargarContenido('cambiarEstado.html')">Cambiar estado propietario</button>
+        <button onclick="logout()">Salir</button>
+    </div>
+
+    <div class="content">
+        <iframe id="contenidoFrame" src="emularTransito.html"></iframe>
+    </div>
+
+    <script>
+        urlIniciarVista = "/menu/vistaConectada";
+
+        const spnNombreCompleto = document.getElementById("nombreCompleto");
+        const iframeContenido = document.getElementById("contenidoFrame");
+
+        window.cargarContenido = function (pagina) {
+            iframeContenido.src = pagina;
+        };
+
+        function mostrar_usuarioNoAutenticado(urlDestino) {
+            window.location.href = urlDestino;
+        }
+
+        function logout() {
+            submit("/menu/logout", "");
+        }
+
+        function mostrar_nombreCompleto(nombreCompleto) {
+            spnNombreCompleto.innerHTML = "Menú administrador - " + nombreCompleto.toUpperCase();
+        }
+    </script>
+</body>
+
+</html>

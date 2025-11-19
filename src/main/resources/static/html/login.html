@@ -1,44 +1,73 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Login - Sistema de Peajes</title>
-  <link rel="stylesheet" href="./css/logIn.css">
-  <script src="/js/vistaWeb.js"></script>
+    <meta charset="UTF-8">
+    <title>Login - Sistema de Peajes</title>
+    <link rel="stylesheet" href="./css/logIn.css">
+
+    <!-- vistaWeb primero -->
+    <script src="/js/vistaWeb.js"></script>
 </head>
 
 <body>
-  <script src="/js/utilesVista.js"></script>
-  <div class="formulario">
-    <h2>Acceso Propietarios</h2>
+    <!-- utilidades (serializarFormulario, mostrarMensaje, etc.) -->
+    <script src="/js/utilesVista.js"></script>
 
-    <form id="formLogin" onsubmit="acceder(event)" autocomplete="off">
-      <label for="cedula">Cédula</label>
-      <input type="text" id="cedula" name="cedula" placeholder="Ingrese su cédula" required>
+    <div class="formulario">
+        <h2>Acceso al Sistema</h2>
 
-      <label for="contrasenia">Contraseña</label>
-      <input type="password" id="contrasenia" name="contrasenia" placeholder="Ingrese su contraseña" required>
+        <form id="formLogin" autocomplete="off">
+            <label for="cedula">Cédula</label>
+            <input type="text" id="cedula" name="cedula" placeholder="Ingrese su cédula" required>
 
-      <button type="submit" >Ingresar</button>
-    </form>
+            <label for="contrasenia">Contraseña</label>
+            <input type="password" id="contrasenia" name="contrasenia" placeholder="Ingrese su contraseña" required>
 
-    <p id="mensaje"></p>
-  </div>
+            <!-- 🔹 Mismo form, dos botones → dos endpoints distintos -->
 
-  <script>
-    function acceder(event){
-        event.preventDefault();
-        submit("/acceso/loginPropietario", serializarFormulario("formLogin"));
-    }
+            <div class="botones-login">
+                <button type="button" onclick="accederComoPropietario()">
+                    Ingresar como propietario
+                </button>
 
-    async function excepcionDeAplicacion(text) {
-        await mostrar_mensaje(text);
-    }
+                <button type="button" class="btn-admin" onclick="accederComoAdministrador()">
+                    Ingresar como administrador
+                </button>
+            </div>
 
-    function mostrar_loginExitoso(url) {
-      window.location.href = url;
-    }
-  </script>
+        </form>
 
+        <p id="mensaje"></p>
+    </div>
+
+    <script>
+        function mostrar_mensaje(texto) {
+            // Si querés usar el pop-up lindo:
+            // return mostrarMensaje(texto);
+            document.getElementById("mensaje").textContent = texto;
+        }
+
+        // vistaWeb.js llama esto cuando el backend responde con id: "loginExitoso"
+        function mostrar_loginExitoso(urlDestino) {
+            window.location.href = urlDestino;
+        }
+
+        function accederComoPropietario() {
+            const params = serializarFormulario("formLogin");
+            submit("/acceso/loginPropietario", params);
+        }
+
+        function accederComoAdministrador() {
+            const params = serializarFormulario("formLogin");
+            submit("/acceso/loginAdministrador", params);
+        }
+
+        // Por si el backend responde con status 299 y mensaje de error de aplicación
+        async function excepcionDeAplicacion(text) {
+            await mostrar_mensaje(text);
+        }
+    </script>
 </body>
+
 </html>

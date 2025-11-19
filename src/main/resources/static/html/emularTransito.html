@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Emular tránsito</title>
+
+  <!-- Igual que en las otras pantallas: vistaWeb primero -->
+  <script src="/js/vistaWeb.js"></script>
+
+  <link rel="stylesheet" href="./css/adminTransitos.css">
+</head>
+<body class="page-emular-transito">
+  <!-- utilesVista al inicio del body -->
+  <script src="/js/utilesVista.js"></script>
+
+  <h2>Emular tránsito</h2>
+
+  <div id="mensaje" class="mensaje"></div>
+
+  <!-- SECCIÓN PUESTOS -->
+  <section class="panel">
+    <h3>Puesto</h3>
+    <div id="contenedorPuestos"></div>
+    <div id="contenedorTarifas"></div>
+  </section>
+
+  <!-- SECCIÓN DATOS DE TRÁNSITO -->
+  <section class="panel">
+    <h3>Datos del tránsito</h3>
+    <form id="formEmular" autocomplete="off">
+      <label for="matricula">Matrícula</label>
+      <input type="text" id="matricula" name="matricula" required />
+
+      <label for="fecha">Fecha</label>
+      <input type="date" id="fecha" name="fecha" required />
+
+      <label for="hora">Hora</label>
+      <input type="time" id="hora" name="hora" required />
+
+      <button type="submit">Emular tránsito</button>
+    </form>
+  </section>
+
+  <!-- SECCIÓN RESULTADO -->
+  <section class="panel">
+    <h3>Resultado del tránsito</h3>
+    <div id="resultadoTransito"></div>
+  </section>
+
+  <script>
+    // ====== CONFIG vistaWeb ======
+    // Esta URL se ejecuta automáticamente al cargar la página
+    urlIniciarVista = "/adminTransitos/vistaConectada";
+
+    const divPuestos   = document.getElementById("contenedorPuestos");
+    const divTarifas   = document.getElementById("contenedorTarifas");
+    const divResultado = document.getElementById("resultadoTransito");
+    const divMensaje   = document.getElementById("mensaje");
+    const formEmular   = document.getElementById("formEmular");
+
+    // ====== SUBMIT DEL FORMULARIO ======
+    formEmular.addEventListener("submit", function (evt) {
+      evt.preventDefault();
+
+      const select = document.getElementById("selectPuestos");
+      if (!select || select.value === "-1") {
+        mostrar_mensaje("Debe seleccionar un puesto");
+        return;
+      }
+
+      // serializar formulario + nombrePuesto
+      const params = serializarFormulario("formEmular")
+                   + "&nombrePuesto=" + encodeURIComponent(select.value);
+
+      submit("/adminTransitos/emular", params);
+    });
+
+    // ====== FUNCIONES mostrar_ QUE USA vistaWeb.js ======
+
+    // 1) Mostrar lista de puestos (combo)
+    function mostrar_puestos(listaPuestos) {
+      // Usamos crearListaDesdeJson como en Agenda
+      divPuestos.innerHTML = crearListaDesdeJson({
+        data: listaPuestos,
+        campoMostrar: "nombre",
+        campoValor:   "nombre",
+        multiple: false,
+        mostrarOpcionInicial: true,
+        id: "selectPuestos"
+      });
+
+      // Cada vez que cambia el puesto, pedimos las tarifas
+      const select = document.getElementById("selectPuestos");
+      if (select) {
+        select.addEventListener("change", function () {
+          if (this.value === "-1") {
+            divTarifas.innerHTML = "";
+            return;
+          }
+          const params = "nombrePuesto=" + encodeURIComponent(this.value);
+          submit("/adminTransitos/tarifasPuesto", params);
+        });
+      }
+    }
+
+    // 2) Mostrar tarifas del puesto seleccionado
+    function mostrar_tarifas(listaTarifas) {
+      // tabla simple con crearTablaDesdeJson
+      divTarifas.innerHTML = crearTablaDesdeJson(listaTarifas);
+    }
+
+    // 3) Mostrar resultado del tránsito
+    //    (ResultadoTransitoDto desde el backend)
+    function mostrar_resultadoTransito(dto) {
+      const html = `
+        <p><strong>Propietario:</strong> ${dto.nombrePropietario} (${dto.estadoPropietario})</p>
+        <p><strong>Puesto:</strong> ${dto.nombrePuesto}</p>
+        <p><strong>Vehículo:</strong> ${dto.matricula} - ${dto.categoria}</p>
+        <p><strong>Bonificación:</strong> ${dto.bonificacion || "Sin bonificación"}</p>
+        <p><strong>Monto tarifa:</strong> $${dto.montoTarifa.toFixed(2)}</p>
+        <p><strong>Monto bonificación:</strong> $${dto.montoBonificacion.toFixed(2)}</p>
+        <p><strong>Monto pagado:</strong> $${dto.montoPagado.toFixed(2)}</p>
+        <p><strong>Saldo luego del tránsito:</strong> $${dto.saldoPosterior.toFixed(2)}</p>
+      `;
+      divResultado.innerHTML = html;
+    }
+
+    // 4) Mensajes / errores de aplicación
+    async function mostrar_mensaje(texto) {
+      divMensaje.textContent = texto;
+      await mostrarMensaje(texto); // popup de utilesVista
+    }
+
+    // 5) Redirección si no está autenticado
+    function mostrar_usuarioNoAutenticado(urlDestino) {
+      window.location.href = urlDestino;
+    }
+  </script>
+</body>
+</html>
