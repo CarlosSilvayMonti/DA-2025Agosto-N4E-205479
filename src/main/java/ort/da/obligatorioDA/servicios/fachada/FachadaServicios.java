@@ -210,19 +210,11 @@ public class FachadaServicios {
         return sPuestos.getPuestos();
     }
 
-    public PropietarioDto cambiarEstadoPropietario(String cedula, EstadoPropietario nuevoEstado) throws PeajeException {
+    public void cambiarEstadoPropietario(String cedula, EstadoPropietario nuevoEstado) throws PeajeException {
         UsuPorpietario propietario = sPropietarios.buscarPorCedula(cedula);
-        EstadoPropietario estadoAnterior = propietario.getEstado();
-
         sPropietarios.cambiarEstado(cedula, nuevoEstado);
-
-        // registrar notificación SIEMPRE (según CU)
-        if (sNotificaciones != null) {
-            sNotificaciones.registrarNotificacionCambioEstado(propietario, nuevoEstado, null);
-        }
-
-        // devolver DTO actualizado
-        return new PropietarioDto(propietario);
+        // Siempre registra notificación, según enunciado
+        sNotificaciones.registrarNotificacionCambioEstado(propietario, nuevoEstado);
     }
 
 }

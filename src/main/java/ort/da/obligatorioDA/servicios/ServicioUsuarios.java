@@ -19,7 +19,6 @@ import java.util.Date;
 
 public class ServicioUsuarios {
 
-
     private List<UsuPorpietario> propietarios;
 
     @Getter
@@ -35,7 +34,8 @@ public class ServicioUsuarios {
     }
 
     public Sesion loginPropietario(String cedula, String contrasenia) throws PeajeException {
-        UsuPorpietario propietario = (UsuPorpietario) login(cedula, contrasenia, propietarios, "Propietario y/o contraseña incorrectos");
+        UsuPorpietario propietario = (UsuPorpietario) login(cedula, contrasenia, propietarios,
+                "Propietario y/o contraseña incorrectos");
 
         Sesion sesion = new Sesion(propietario);
         sesion.setFechaInicio(new Date());
@@ -50,7 +50,6 @@ public class ServicioUsuarios {
 
         return sesion;
     }
-
 
     private Usuario login(String cedula, String contrasenia, List<? extends Usuario> usuarios, String mensajeError)
             throws PeajeException {
@@ -93,7 +92,6 @@ public class ServicioUsuarios {
         throw new PeajeException("No existe el vehículo");
     }
 
-
     public void cambiarEstado(String cedula, EstadoPropietario nuevoEstado) throws PeajeException {
         UsuPorpietario propietario = buscarPorCedula(cedula);
         if (propietario.getEstado() == nuevoEstado) {
@@ -102,17 +100,20 @@ public class ServicioUsuarios {
         propietario.setEstado(nuevoEstado);
     }
 
-    /*public void acreditarVehiculo(String cedulaPropietario, String matriculaVehiculo, double monto) throws PeajeException {
-        UsuPorpietario propietario = buscarPorCedula(cedulaPropietario);
-        propietario.acreditarVehiculo(matriculaVehiculo, monto);
-    }*/
+    /*
+     * public void acreditarVehiculo(String cedulaPropietario, String
+     * matriculaVehiculo, double monto) throws PeajeException {
+     * UsuPorpietario propietario = buscarPorCedula(cedulaPropietario);
+     * propietario.acreditarVehiculo(matriculaVehiculo, monto);
+     * }
+     */
 
     public void registrarTransito(String cedula, String matricula, double montoTarifaFinal) throws PeajeException {
         UsuPorpietario p = buscarPorCedula(cedula);
         Vehiculo v = p.getVehiculos().stream()
-            .filter(veh -> veh.getMatricula().equalsIgnoreCase(matricula))
-            .findFirst()
-            .orElseThrow(() -> new PeajeException("Vehículo no encontrado: " + matricula));
+                .filter(veh -> veh.getMatricula().equalsIgnoreCase(matricula))
+                .findFirst()
+                .orElseThrow(() -> new PeajeException("Vehículo no encontrado: " + matricula));
 
         if (v.getSaldo() < montoTarifaFinal) {
             throw new PeajeException("Saldo insuficiente en " + v.getMatricula() + " (saldo: " + v.getSaldo() + ")");
@@ -122,7 +123,7 @@ public class ServicioUsuarios {
 
     public void logout(Sesion sesion) {
         sesionesActivas.remove(sesion);
-        /*falta el observador */
+        /* falta el observador */
     }
 
 }

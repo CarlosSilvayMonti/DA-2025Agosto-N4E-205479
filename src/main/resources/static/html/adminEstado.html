@@ -4,12 +4,11 @@
   <meta charset="UTF-8">
   <title>Cambiar estado de propietario</title>
   <link rel="stylesheet" href="./css/adminEstado.css">
-  <!-- vistaWeb primero, como en el resto del proyecto -->
   <script src="/js/vistaWeb.js"></script>
 </head>
 
 <body class="page-admin-estado">
-  <!-- utilesVista al inicio del body -->
+
   <script src="/js/utilesVista.js"></script>
 
   <div class="panel-estado">
@@ -17,9 +16,6 @@
 
     <div id="mensaje" class="mensaje"></div>
 
-    <!-- =========================
-         FORMULARIO BUSCAR PROPIETARIO
-         ========================== -->
     <form id="formBuscarPropietario" class="form-buscar-propietario" autocomplete="off">
       <div>
         <label for="cedula">Cédula del propietario:</label><br>
@@ -30,9 +26,6 @@
       </div>
     </form>
 
-    <!-- =========================
-         DATOS DEL PROPIETARIO
-         ========================== -->
     <section class="seccion-datos-prop" id="seccionDatosPropietario" style="display:none;">
       <h3>Datos del propietario</h3>
       <p><strong>Nombre completo:</strong> <span id="nombreProp"></span></p>
@@ -40,23 +33,16 @@
       <p><strong>Saldo actual:</strong> $<span id="saldoActual"></span></p>
     </section>
 
-    <!-- =========================
-         CAMBIO DE ESTADO
-         ========================== -->
     <section class="seccion-estado" id="seccionCambiarEstado" style="display:none;">
       <h3>Cambiar estado</h3>
 
       <label for="selectEstado">Nuevo estado:</label>
       <div id="contenedorEstados">
-        <!-- Acá se va a inyectar el <select> con los estados -->
       </div>
 
       <button type="button" onclick="cambiarEstado()">Cambiar estado</button>
     </section>
 
-    <!-- =========================
-         NOTIFICACIONES DEL PROPIETARIO
-         ========================== -->
     <section id="seccionNotificaciones" style="display:none;">
       <h3>Notificaciones del propietario</h3>
       <div id="contenedorNotificaciones"></div>
@@ -64,12 +50,6 @@
   </div>
 
   <script>
-    // ================================
-    // CONFIGURACIÓN INICIAL
-    // ================================
-    // Cuando se carga esta vista dentro del iframe del admin:
-    // El controlador /adminEstado/vistaConectada debería enviar los estados posibles
-    //   new Respuesta("estados", [...])
     urlIniciarVista = "/adminEstado/vistaConectada";
 
     const formBuscarProp = document.getElementById("formBuscarPropietario");
@@ -86,15 +66,10 @@
     const divEstados     = document.getElementById("contenedorEstados");
     const divNotifs      = document.getElementById("contenedorNotificaciones");
 
-    // Guardamos la cédula del propietario actualmente encontrado
     let cedulaPropietarioActual = null;
 
-    // ================================
-    // EVENTOS
-    // ================================
     formBuscarProp.addEventListener("submit", function (e) {
       e.preventDefault();
-      // Buscamos propietario por cédula
       submit("/adminEstado/buscarPropietario", serializarFormulario("formBuscarPropietario"));
     });
 
@@ -116,27 +91,19 @@
       submit("/adminEstado/cambiarEstado", params);
     }
 
-    // ================================
-    // FUNCIONES mostrar_... INVOCADAS POR vistaWeb.js
-    // ================================
-
-    // Respuesta: new Respuesta("estados", listaEstados)
-    // listaEstados puede ser ["HABILITADO","SUSPENDIDO",...] o [{nombre:"HABILITADO"},...]
     function mostrar_estados(listaEstados) {
       if (!Array.isArray(listaEstados) || listaEstados.length === 0) {
         divEstados.innerHTML = "<p>No hay estados configurados.</p>";
         return;
       }
 
-      // Normalizamos: si viene lista de strings, arma objetos {nombre: string}
       const estadosNormalizados = listaEstados.map(e => {
         if (typeof e === "string") {
           return { nombre: e };
         }
-        return e; // ya sería un objeto con .nombre
+        return e;
       });
 
-      // Creamos el <select> usando nuestras utilidades
       divEstados.innerHTML = crearListaDesdeJson({
         data: estadosNormalizados,
         campoMostrar: "nombre",
@@ -149,8 +116,6 @@
       seccionEstado.style.display = "block";
     }
 
-    // Respuesta: new Respuesta("propietario", propietarioDto)
-    // donde propietarioDto tiene: cedula, nombreCompleto, estado, saldoActual...
     function mostrar_propietario(dto) {
       if (!dto) return;
 
@@ -161,11 +126,9 @@
       spanSaldoAct.textContent   = dto.saldoActual != null ? dto.saldoActual.toFixed(2) : "0.00";
 
       seccionDatos.style.display  = "block";
-      seccionEstado.style.display = "block"; // por si aún no estaba visible
+      seccionEstado.style.display = "block";
     }
 
-    // Respuesta: new Respuesta("notificaciones", listaNotificaciones)
-    // Cada notificación debería tener al menos: fechaHora, mensaje
     function mostrar_notificaciones(lista) {
       if (!Array.isArray(lista) || lista.length === 0) {
         divNotifs.innerHTML = "<p>No hay notificaciones para mostrar.</p>";
@@ -178,19 +141,15 @@
       seccionNotifs.style.display = "block";
     }
 
-    // Respuesta: new Respuesta("mensaje", "texto...")
     async function mostrar_mensaje(texto) {
       divMensaje.textContent = texto || "";
-      // También mostramos popup lindo
       await mostrarMensaje(texto);
     }
 
-    // Respuesta: new Respuesta("usuarioNoAutenticado", "/html/login.html")
     function mostrar_usuarioNoAutenticado(urlDestino) {
       window.location.href = urlDestino;
     }
 
-    // En caso de usar excepcionDeAplicacion desde vistaWeb
     async function excepcionDeAplicacion(texto) {
       await mostrar_mensaje(texto);
     }

@@ -20,7 +20,6 @@
     <section class="datos">
         <p><strong>Estado:</strong> <span id="estado"></span></p>
         <p><strong>Saldo actual:</strong> $<span id="saldo"></span></p>
-        <button onclick="actualizarTablero()">Actualizar tablero</button>
     </section>
 
     <!-- Vehículos -->
@@ -96,8 +95,6 @@
             document.getElementById("contenedorNotificaciones").innerHTML = htmlTabla;
         }
 
-
-
         async function borrarNotificaciones() {
             const confirmar = await mostrarConfirmacion("¿Desea borrar todas las notificaciones?");
             if (confirmar) {
@@ -119,18 +116,14 @@
             mostrarMensaje(texto);
         }
 
-        function actualizarTablero() {
-            // Reenvía el request para refrescar datos
-            submit("/propietarios/vistaConectado", "");
-        }
-
-
         async function borrarNotificaciones() {
             const confirmar = await mostrarConfirmacion("¿Desea borrar todas las notificaciones?");
             if (confirmar) {
                 submit("/propietarios/borrarNotificaciones", "");
             }
         }
+
+        
 
     </script>
 </body>

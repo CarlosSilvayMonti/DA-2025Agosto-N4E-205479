@@ -16,9 +16,9 @@ public class ServicioNotificaciones {
 
     // 🔔 Notificación por tránsito
     public void registrarNotificacionTransito(UsuPorpietario propietario,
-                                              String nombrePuesto,
-                                              String matriculaVehiculo,
-                                              LocalDateTime fechaHora) {
+            String nombrePuesto,
+            String matriculaVehiculo,
+            LocalDateTime fechaHora) {
 
         String mensaje = FMT.format(fechaHora)
                 + " - Pasaste por el puesto "
@@ -32,8 +32,8 @@ public class ServicioNotificaciones {
 
     // 🔔 Notificación por saldo bajo
     public void registrarNotificacionSaldoBajo(UsuPorpietario propietario,
-                                               double saldoActual,
-                                               LocalDateTime fechaHora) {
+            double saldoActual,
+            LocalDateTime fechaHora) {
 
         String mensaje = FMT.format(fechaHora)
                 + " - Tu saldo actual es de $ "
@@ -45,19 +45,17 @@ public class ServicioNotificaciones {
     }
 
     // 🔔 Notificación por cambio de estado (SIEMPRE se registra)
-    public void registrarNotificacionCambioEstado(UsuPorpietario propietario,
-                                                  EstadoPropietario nuevoEstado,
-                                                  LocalDateTime fechaHora) {
+    public void registrarNotificacionCambioEstado(UsuPorpietario propietario, EstadoPropietario nuevoEstado) {
         if (propietario == null || nuevoEstado == null) {
             return;
         }
-
-        String mensaje = FMT.format(fechaHora)
+        LocalDateTime ahora = LocalDateTime.now();
+        String mensaje = FMT.format(ahora)
                 + " - Se ha cambiado tu estado en el sistema. Tu estado actual es "
                 + nuevoEstado;
 
         propietario.getNotificaciones().add(
-                new Notificacion(fechaHora, mensaje));
+                new Notificacion(ahora, mensaje));
     }
 
     // 🔍 Obtener ordenadas desc por fecha/hora

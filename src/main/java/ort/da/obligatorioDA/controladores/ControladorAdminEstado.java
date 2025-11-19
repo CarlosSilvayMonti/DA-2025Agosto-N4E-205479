@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
+import ort.da.obligatorioDA.dtos.NotificacionDto;
 import ort.da.obligatorioDA.dtos.PropietarioDto;
 import ort.da.obligatorioDA.excepciones.PeajeException;
 import ort.da.obligatorioDA.modelo.EstadoPropietario;
@@ -19,15 +20,6 @@ import ort.da.obligatorioDA.modelo.Usuario;
 import ort.da.obligatorioDA.modelo.UsuPorpietario;
 import ort.da.obligatorioDA.servicios.fachada.FachadaServicios;
 import ort.da.obligatorioDA.utils.Respuesta;
-
-// DTO muy simple para los estados
-class EstadoPropietarioDto {
-    public String nombre;
-
-    public EstadoPropietarioDto(EstadoPropietario e) {
-        this.nombre = e.toString();
-    }
-}
 
 @RestController
 @Scope("session")
@@ -40,36 +32,31 @@ public class ControladorAdminEstado {
         this.fachada = FachadaServicios.getInstancia();
     }
 
-    // 1) Inicializar vista: devolver lista de estados
     @PostMapping("/vistaConectada")
-    public List<Respuesta> inicializarVista(
-        @SessionAttribute(name = "usuarioLogueado", required = false) Usuario usuario) {
+    public List<Respuesta> vistaConectada(
+            @SessionAttribute(name = "usuarioLogueado", required = false) Usuario usuario) {
 
         if (!(usuario instanceof UsuAdmin)) {
             return Respuesta.lista(
-                new Respuesta("usuarioNoAutenticado", "/html/login.html")
-            );
+                    new Respuesta("usuarioNoAutenticado", "/html/login.html"));
         }
 
-        List<EstadoPropietarioDto> estados = Arrays.stream(EstadoPropietario.values())
-                .map(EstadoPropietarioDto::new)
+        List<String> estados = Arrays.stream(EstadoPropietario.values())
+                .map(Enum::name)
                 .collect(Collectors.toList());
 
         return Respuesta.lista(
-            new Respuesta("estados", estados)
-        );
+                new Respuesta("estados", estados));
     }
 
-    // 2) Buscar propietario por cédula
     @PostMapping("/buscarPropietario")
     public List<Respuesta> buscarPropietario(
-        @SessionAttribute(name = "usuarioLogueado", required = false) Usuario usuario,
-        @RequestParam String cedula) {
+            @SessionAttribute(name = "usuarioLogueado", required = false) Usuario usuario,
+            @RequestParam String cedula) {
 
         if (!(usuario instanceof UsuAdmin)) {
             return Respuesta.lista(
-                new Respuesta("usuarioNoAutenticado", "/html/login.html")
-            );
+                    new Respuesta("usuarioNoAutenticado", "/html/login.html"));
         }
 
         try {
@@ -77,48 +64,67 @@ public class ControladorAdminEstado {
             PropietarioDto dto = new PropietarioDto(p);
 
             return Respuesta.lista(
-                new Respuesta("propietario", dto)
-            );
+                    new Respuesta("propietario", dto));
 
         } catch (PeajeException e) {
             return Respuesta.lista(
-                new Respuesta("mensaje", e.getMessage())
-            );
+                    new Respuesta("mensaje", e.getMessage()));
         }
     }
 
-    // 3) Cambiar el estado
     @PostMapping("/cambiarEstado")
     public List<Respuesta> cambiarEstado(
-        @SessionAttribute(name = "usuarioLogueado", required = false) Usuario usuario,
-        @RequestParam String cedula,
-        @RequestParam String nuevoEstado) {
+            @SessionAttribute(name = "usuarioLogueado", required = false) Usuario usuario,
+            @RequestParam String cedula,
+            @RequestParam String nuevoEstado) {
 
         if (!(usuario instanceof UsuAdmin)) {
             return Respuesta.lista(
-                new Respuesta("usuarioNoAutenticado", "/html/login.html")
-            );
+                    new Respuesta("usuarioNoAutenticado", "/html/login.html"));
         }
+
+        System.out.println(">>> cambiarEstado() - cedula=" + cedula + " nuevoEstado=" + nuevoEstado);
 
         try {
-            EstadoPropietario estadoNuevo = EstadoPropietario.valueOf(nuevoEstado);
+            // 1) Convertir string → enum de forma segura
+            EstadoPropietario estado;
+            try {
+                estado = EstadoPropietario.valueOf(nuevoEstado);
+            } catch (IllegalArgumentException iae) {
+                System.out.println(">>> cambiarEstado() - estado no válido: " + nuevoEstado);
+                return Respuesta.lista(
+                        new Respuesta("mensaje", "Estado no válido: " + nuevoEstado));
+            }
 
-            PropietarioDto dtoActualizado = fachada.cambiarEstadoPropietario(cedula, estadoNuevo);
+            // 2) Cambiar estado + notificación
+            fachada.cambiarEstadoPropietario(cedula, estado);
+
+            // 3) Volver a leer propietario y notificaciones
+            UsuPorpietario p = fachada.buscarPorCedula(cedula);
+            PropietarioDto dto = new PropietarioDto(p);
+            List<NotificacionDto> notifs = fachada.notificacionesDePropietario(cedula);
+
+            System.out.println(">>> cambiarEstado() OK - nuevo estado: " + dto.getEstado());
 
             return Respuesta.lista(
-                new Respuesta("propietario", dtoActualizado),
-                new Respuesta("mensaje", "Estado cambiado correctamente a " + estadoNuevo)
-            );
-
-        } catch (IllegalArgumentException ex) {
-            // valueOf falló
-            return Respuesta.lista(
-                new Respuesta("mensaje", "Estado inválido: " + nuevoEstado)
-            );
+                    new Respuesta("propietario", dto),
+                    new Respuesta("notificaciones", notifs),
+                    new Respuesta("mensaje", "Estado cambiado correctamente."));
         } catch (PeajeException e) {
+            // Errores "de negocio"
+            System.out.println(">>> cambiarEstado() - PeajeException: " + e.getMessage());
             return Respuesta.lista(
-                new Respuesta("mensaje", e.getMessage())
-            );
+                    new Respuesta("mensaje", e.getMessage()));
+        } catch (Exception e) {
+            // Errores imprevistos
+            e.printStackTrace();
+            System.out.println(">>> cambiarEstado() - Exception: "
+                    + e.getClass().getName() + " - " + e.getMessage());
+            return Respuesta.lista(
+                    new Respuesta("mensaje", "Error inesperado al cambiar estado: "
+                            + e.getClass().getSimpleName()
+                            + (e.getMessage() != null ? " - " + e.getMessage() : "")));
         }
     }
+
 }
