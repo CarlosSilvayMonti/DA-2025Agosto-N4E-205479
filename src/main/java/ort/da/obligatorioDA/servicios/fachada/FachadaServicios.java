@@ -179,17 +179,12 @@ public class FachadaServicios {
     public Transito emularTransito(String matricula, String nombrePuesto, LocalDateTime fechaHora)
             throws PeajeException {
 
-        // 1) Buscar propietario a partir de la matrícula
         UsuPorpietario p = sPropietarios.buscarPropietarioPorMatricula(matricula);
 
-        // 2) Buscar vehículo de ese propietario
         Vehiculo v = sPropietarios.buscarVehiculoDe(p, matricula);
 
-        // 3) Buscar puesto
         Puesto puesto = sPuestos.buscarPorNombre(nombrePuesto);
 
-        // 4) Registrar tránsito (aplica descuentos, valida saldo, genera
-        // notificaciones, etc.)
         return sTransitos.registrarTransito(p, v, puesto, fechaHora);
     }
 
@@ -201,7 +196,6 @@ public class FachadaServicios {
         return sPuestos.buscarPorNombre(nombre);
     }
 
-    // En FachadaServicios
     public List<Bonificacion> getBonificacionesDto() {
         return sBonificaciones.getBonificaciones();
     }
@@ -213,8 +207,12 @@ public class FachadaServicios {
     public void cambiarEstadoPropietario(String cedula, EstadoPropietario nuevoEstado) throws PeajeException {
         UsuPorpietario propietario = sPropietarios.buscarPorCedula(cedula);
         sPropietarios.cambiarEstado(cedula, nuevoEstado);
-        // Siempre registra notificación, según enunciado
         sNotificaciones.registrarNotificacionCambioEstado(propietario, nuevoEstado);
     }
+
+    public ServicioNotificaciones getServicioNotificaciones() {
+        return sNotificaciones;
+    }
+
 
 }

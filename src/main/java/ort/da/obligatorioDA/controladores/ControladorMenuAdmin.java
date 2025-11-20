@@ -23,7 +23,7 @@ public class ControladorMenuAdmin {
 
     @PostMapping("/vistaConectado")
     public List<Respuesta> inicializarVista(
-        @SessionAttribute(name = "usuarioAdmin", required = false) UsuAdmin admin) {
+        @SessionAttribute(name = "usuarioLogueado", required = false) UsuAdmin admin) {
 
             if (admin == null) {
                 // Redirige al login si no hay usuario en sesión

@@ -7,8 +7,15 @@
     <title>Tablero del Propietario</title>
     <link rel="stylesheet" href="./css/tPropietario.css">
 
-    <!-- ✅ Cargar primero vistaWeb.js -->
     <script src="/js/vistaWeb.js"></script>
+
+    <script>
+    function conexionSSECerrada(event) {
+        console.log("SSE cerrada o con error en propietario:", event);
+        // Podés mostrar un mensaje suave, pero NO vaciar el body:
+        // mostrarMensaje("Se perdió la conexión en tiempo real. La vista sigue funcionando.");
+    }
+    </script>
 </head>
 
 <body>
@@ -16,19 +23,16 @@
 
     <div id="mensaje" class="mensaje"></div>
 
-    <!-- Datos generales -->
     <section class="datos">
         <p><strong>Estado:</strong> <span id="estado"></span></p>
         <p><strong>Saldo actual:</strong> $<span id="saldo"></span></p>
     </section>
 
-    <!-- Vehículos -->
     <section>
         <h3>Vehículos registrados</h3>
         <div id="contenedorVehiculos"></div>
     </section>
 
-    <!-- Bonificaciones -->
     <section>
         <h3>Bonificaciones asignadas</h3>
         <div id="contenedorBonificaciones"></div>
@@ -39,8 +43,6 @@
         <div id="contenedorTransitos"></div>
     </section>
 
-
-    <!-- Notificaciones -->
     <section>
         <h3>Notificaciones</h3>
         <div id="contenedorNotificaciones"></div>
@@ -53,6 +55,13 @@
     <script>
      
         urlIniciarVista = "/propietarios/vistaConectado";
+        urlRegistroSSE = "/propietarios/registroSSE";
+
+        function conexionSSECerrada(event) {
+            console.log("SSE cerrada en tableroPropietario:", event);
+        }
+
+
 
         function mostrar_estado(estado) {
             document.getElementById("estado").textContent = estado.toUpperCase();
@@ -91,8 +100,12 @@
         }
 
         function mostrar_notificaciones(lista) {
-            const htmlTabla = crearTablaDesdeJson(lista);
-            document.getElementById("contenedorNotificaciones").innerHTML = htmlTabla;
+            const cont = document.getElementById("contenedorNotificaciones");
+            if (!lista || lista.length === 0) {
+            cont.innerHTML = "<p>No hay notificaciones.</p>";
+            return;
+            }
+            cont.innerHTML = crearTablaDesdeJson(lista);
         }
 
         async function borrarNotificaciones() {
@@ -122,10 +135,8 @@
                 submit("/propietarios/borrarNotificaciones", "");
             }
         }
-
-        
-
     </script>
+    <script src="/js/sse.js"></script>
 </body>
 
 </html>
