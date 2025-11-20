@@ -16,7 +16,6 @@ public class ServicioNotificaciones extends Observable {
 
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-    // 🔔 Notificación por tránsito
     public void registrarNotificacionTransito(UsuPorpietario propietario,
             String nombrePuesto,
             String matriculaVehiculo,
@@ -31,11 +30,9 @@ public class ServicioNotificaciones extends Observable {
         propietario.getNotificaciones().add(
                 new Notificacion(fechaHora, mensaje));
 
-        // 👇 Avisar a los observadores que cambiaron notificaciones
         notificar(Observador.Evento.NOTIFICACIONES_ACTUALIZADAS);
     }
 
-    // 🔔 Notificación por saldo bajo
     public void registrarNotificacionSaldoBajo(UsuPorpietario propietario,
             double saldoActual,
             LocalDateTime fechaHora) {
@@ -48,11 +45,9 @@ public class ServicioNotificaciones extends Observable {
         propietario.getNotificaciones().add(
                 new Notificacion(fechaHora, mensaje));
 
-        // 👇 También dispara evento
         notificar(Observador.Evento.NOTIFICACIONES_ACTUALIZADAS);
     }
 
-    // 🔔 Notificación por cambio de estado
     public void registrarNotificacionCambioEstado(UsuPorpietario propietario,
                                                   EstadoPropietario nuevoEstado) {
 
@@ -67,12 +62,9 @@ public class ServicioNotificaciones extends Observable {
         propietario.getNotificaciones().add(
                 new Notificacion(ahora, mensaje)
         );
-
-        // 👇 Ya lo tenías bien
         notificar(Observador.Evento.NOTIFICACIONES_ACTUALIZADAS);
     }
 
-    // Obtener ordenadas desc por fecha/hora
     public List<Notificacion> obtenerNotificaciones(UsuPorpietario propietario) {
         return propietario.getNotificaciones()
                 .stream()
@@ -80,14 +72,11 @@ public class ServicioNotificaciones extends Observable {
                 .collect(Collectors.toList());
     }
 
-    // Borrar todas – devuelve true si había alguna
     public boolean borrarNotificaciones(UsuPorpietario propietario) {
         if (propietario.getNotificaciones().isEmpty()) {
             return false;
         }
         propietario.getNotificaciones().clear();
-
-        // 👇 También avisamos que cambió la lista
         notificar(Observador.Evento.NOTIFICACIONES_ACTUALIZADAS);
 
         return true;

@@ -5,13 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration;
-
 import ort.da.obligatorioDA.modelo.Bonificacion;
 import ort.da.obligatorioDA.modelo.Categoria;
 import ort.da.obligatorioDA.modelo.EstadoPropietario;
-import ort.da.obligatorioDA.modelo.Notificacion;
-import ort.da.obligatorioDA.modelo.PrecargaDatos;
 import ort.da.obligatorioDA.modelo.Puesto;
 import ort.da.obligatorioDA.modelo.Sesion;
 import ort.da.obligatorioDA.modelo.Transito;
@@ -23,7 +19,6 @@ import ort.da.obligatorioDA.dtos.PropietarioDto;
 import ort.da.obligatorioDA.dtos.TransitoDto;
 import ort.da.obligatorioDA.dtos.VehiculoDto;
 import ort.da.obligatorioDA.excepciones.PeajeException;
-import ort.da.obligatorioDA.dtos.BonificacionAsignadaDto;
 import ort.da.obligatorioDA.dtos.NotificacionDto;
 
 public class FachadaServicios {
@@ -52,6 +47,10 @@ public class FachadaServicios {
             instancia = new FachadaServicios();
         }
         return instancia;
+    }
+
+    public ServicioNotificaciones gServicioNotificaciones(){
+        return sNotificaciones;
     }
 
     // ==================== AGREGAR ====================

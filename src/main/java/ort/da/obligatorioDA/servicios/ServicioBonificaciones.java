@@ -57,6 +57,12 @@ public class ServicioBonificaciones {
             throw new PeajeException("La bonificación ya está asignada a este propietario para el puesto especificado");
         }
 
+        String estado = propietario.getEstado().toString();
+        if (estado == "DESHABILITADO"){
+            throw new PeajeException("El proptario esta deshabilitado no se le puede asignar bonificación");
+        }
+        
+
         propietario.getBonificacionesAsignadas().add(
                 new BonificacionAsignada(bonificacion, puesto, new java.util.Date()));
 

@@ -30,13 +30,29 @@ public class ServicioTransitos {
     public Transito registrarTransito(UsuPorpietario p, Vehiculo v, Puesto puesto, LocalDateTime fechaHora)
             throws PeajeException {
 
+
+        if (p.getEstado() == EstadoPropietario.DESHABILITADO){
+            throw new PeajeException("El propietario del vehículo está deshabilitado, no puede realizar tránsito");
+        }
+        
+        if (p.getEstado() == EstadoPropietario.SUSPENDIDO){
+            throw new PeajeException("El usuario esta suspendido, no puede realizar tánsitos");
+        }
+
         double tarifaBase = puesto.getTarifas().stream()
                 .filter(t -> t.getCategoria().equals(v.getCategoria()))
                 .findFirst()
                 .orElseThrow(() -> new PeajeException("No hay tarifa para la categoría del vehículo en este puesto"))
                 .getMonto();
 
-        Descuento desc = calcularDescuento(p, v, puesto, fechaHora, tarifaBase);
+        Descuento desc; 
+
+        if (p.getEstado() == EstadoPropietario.PENALIZADO){
+            desc = new Descuento(null, 0);
+        }else{
+            desc = calcularDescuento(p, v, puesto, fechaHora, tarifaBase);
+        }
+
         double pagado = Math.max(0, tarifaBase - desc.monto);
 
         if (p.getSaldoActual() < pagado) {
@@ -53,21 +69,21 @@ public class ServicioTransitos {
                 pagado);
         transitos.add(t);
 
-        // ⬇️ Notificación de tránsito
-        sNotificaciones.registrarNotificacionTransito(
+        if (p.getEstado() != EstadoPropietario.PENALIZADO){
+            sNotificaciones.registrarNotificacionTransito(
                 p,
                 puesto.getNombre(),
                 v.getMatricula(),
                 fechaHora);
 
-        // ⬇️ Notificación de saldo bajo (si corresponde)
-        if (p.getSaldoActual() < p.getSaldoMinimo()) {
-            sNotificaciones.registrarNotificacionSaldoBajo(
-                    p,
-                    p.getSaldoActual(),
-                    fechaHora);
+            if (p.getSaldoActual() < p.getSaldoMinimo()) {
+                sNotificaciones.registrarNotificacionSaldoBajo(
+                        p,
+                        p.getSaldoActual(),
+                        fechaHora);
+            }
         }
-
+        
         return t;
     }
 
@@ -78,7 +94,6 @@ public class ServicioTransitos {
                 .collect(Collectors.toList());
     }
 
-    // ----- consultas para el tablero -----
 
     public List<Transito> transitosDe(UsuPorpietario p) {
         return transitos.stream()
@@ -100,18 +115,15 @@ public class ServicioTransitos {
                 .sum();
     }
 
-    // ----- descuento -----
     private record Descuento(String tipo, double monto) {
     }
 
     private Descuento calcularDescuento(UsuPorpietario p, Vehiculo v, Puesto puesto,
             LocalDateTime fechaHora, double tarifaBase) {
 
-        // Estados que bloquean bonif (ej: PENALIZADO sin bonif)
         if (p.getEstado() == EstadoPropietario.PENALIZADO)
             return new Descuento(null, 0);
 
-        // ¿Tiene bonificación asignada para este puesto?
         var asignadaOpt = p.getBonificacionesAsignadas().stream()
                 .filter(ba -> ba.getPuesto().equals(puesto))
                 .findFirst();
@@ -130,7 +142,7 @@ public class ServicioTransitos {
                         .filter(t -> t.getPuesto().equals(puesto))
                         .filter(t -> t.getFechaHora().toLocalDate().equals(fechaHora.toLocalDate()))
                         .count();
-                // 50% a partir del segundo tránsito del día
+
                 return (hoy >= 1)
                         ? new Descuento("Frecuentes", tarifaBase * 0.5)
                         : new Descuento("Frecuentes", 0);

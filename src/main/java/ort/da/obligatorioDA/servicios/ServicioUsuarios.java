@@ -6,14 +6,10 @@ import java.util.List;
 import lombok.Getter;
 import ort.da.obligatorioDA.excepciones.PeajeException;
 import ort.da.obligatorioDA.modelo.EstadoPropietario;
-import ort.da.obligatorioDA.modelo.PrecargaDatos;
 import ort.da.obligatorioDA.modelo.Sesion;
 import ort.da.obligatorioDA.modelo.UsuPorpietario;
 import ort.da.obligatorioDA.modelo.Usuario;
 import ort.da.obligatorioDA.modelo.Vehiculo;
-import ort.da.obligatorioDA.servicios.fachada.FachadaServicios;
-import ort.da.obligatorioDA.modelo.SesionPropietario;
-import ort.da.obligatorioDA.modelo.UsuAdmin;
 
 import java.util.Date;
 

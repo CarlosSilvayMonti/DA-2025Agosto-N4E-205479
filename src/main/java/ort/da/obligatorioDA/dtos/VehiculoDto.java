@@ -13,7 +13,7 @@ public class VehiculoDto {
         this.matricula = v.getMatricula();
         this.modelo = v.getModelo();
         this.color = v.getColor();
-        this.transitos = transitos;                 // <— que no quede 0 por default
+        this.transitos = transitos;
         this.montoTotalGastado = gasto;
     }
 

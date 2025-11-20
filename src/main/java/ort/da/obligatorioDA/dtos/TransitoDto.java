@@ -9,10 +9,10 @@ public class TransitoDto {
     private String matricula;
     private String categoria;
     private double montoTarifa;
-    private String tipoBonificacion; // puede venir null → mandalo como "" en el DTO
+    private String tipoBonificacion; 
     private double montoBonificacion;
     private double montoPagado;
-    private String fechaHora; // formateada
+    private String fechaHora; 
 
     public TransitoDto(Transito t) {
         this.puesto = t.getPuesto().getNombre();

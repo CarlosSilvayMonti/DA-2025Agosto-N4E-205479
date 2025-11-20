@@ -86,7 +86,6 @@ public class ControladorAdminEstado {
         System.out.println(">>> cambiarEstado() - cedula=" + cedula + " nuevoEstado=" + nuevoEstado);
 
         try {
-            // 1) Convertir string → enum de forma segura
             EstadoPropietario estado;
             try {
                 estado = EstadoPropietario.valueOf(nuevoEstado);
@@ -96,10 +95,8 @@ public class ControladorAdminEstado {
                         new Respuesta("mensaje", "Estado no válido: " + nuevoEstado));
             }
 
-            // 2) Cambiar estado + notificación
             fachada.cambiarEstadoPropietario(cedula, estado);
 
-            // 3) Volver a leer propietario y notificaciones
             UsuPorpietario p = fachada.buscarPorCedula(cedula);
             PropietarioDto dto = new PropietarioDto(p);
             List<NotificacionDto> notifs = fachada.notificacionesDePropietario(cedula);
@@ -111,12 +108,10 @@ public class ControladorAdminEstado {
                     new Respuesta("notificaciones", notifs),
                     new Respuesta("mensaje", "Estado cambiado correctamente."));
         } catch (PeajeException e) {
-            // Errores "de negocio"
             System.out.println(">>> cambiarEstado() - PeajeException: " + e.getMessage());
             return Respuesta.lista(
                     new Respuesta("mensaje", e.getMessage()));
         } catch (Exception e) {
-            // Errores imprevistos
             e.printStackTrace();
             System.out.println(">>> cambiarEstado() - Exception: "
                     + e.getClass().getName() + " - " + e.getMessage());

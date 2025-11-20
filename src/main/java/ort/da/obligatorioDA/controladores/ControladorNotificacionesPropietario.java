@@ -32,15 +32,11 @@ public class ControladorNotificacionesPropietario implements Observador {
 
     private String cedulaActual; 
 
-    public ControladorNotificacionesPropietario(
-            ConexionNavegador conexion,
-            ServicioNotificaciones sNotificaciones) {
+    public ControladorNotificacionesPropietario(ConexionNavegador conexion) {
+        this.fachada  = FachadaServicios.getInstancia();
+        this.conexion = conexion;
 
-        this.fachada         = FachadaServicios.getInstancia();
-        this.conexion        = conexion;
-        this.sNotificaciones = sNotificaciones;
-
-        // Me suscribo al servicio
+        this.sNotificaciones = fachada.getServicioNotificaciones();
         this.sNotificaciones.suscribir(this);
     }
 

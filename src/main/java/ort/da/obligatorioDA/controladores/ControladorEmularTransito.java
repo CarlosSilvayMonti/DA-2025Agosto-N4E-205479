@@ -30,7 +30,6 @@ public class ControladorEmularTransito {
         this.fachada = FachadaServicios.getInstancia();
     }
 
-    // 1) Inicializar vista: lista de puestos
     @PostMapping("/vistaConectada")
     public List<Respuesta> inicializarVista(
         @SessionAttribute(name = "usuarioLogueado", required = false) Usuario usuario) {

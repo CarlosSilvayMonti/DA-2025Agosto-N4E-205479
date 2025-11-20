@@ -33,7 +33,6 @@ public class ObligatorioDaApplication {
         try {
             FachadaServicios fachada = FachadaServicios.getInstancia();
 
-            // ================================================================
             //ADMINISTRADORES
             
             UsuAdmin admin1 = new UsuAdmin("123", "admin", "Usuario Administrador");
@@ -41,7 +40,6 @@ public class ObligatorioDaApplication {
             fachada.agregar(admin1);
             fachada.agregar(admin2);
 
-            // ================================================================
             //CATEGORÍAS
             Categoria auto = new Categoria("Automóvil");
             Categoria camion = new Categoria("Camión");
@@ -50,7 +48,6 @@ public class ObligatorioDaApplication {
             fachada.agregar(camion);
             fachada.agregar(moto);
 
-            // ================================================================
             //PROPIETARIOS Y VEHÍCULOS
             UsuPorpietario p1 = new UsuPorpietario("234", "prop", "Carlos Silva",
                     2000, 500, EstadoPropietario.HABILITADO);
@@ -69,7 +66,6 @@ public class ObligatorioDaApplication {
 			/*p1.acreditarVehiculo("SBC1234", 1200);
 			p1.acreditarVehiculo("SCB5678", 800);*/
 
-            // ================================================================
             //PUESTOS Y TARIFAS
             Puesto pto1 = new Puesto("Peaje Pando", "Ruta Interbalnearia km 33");
             Puesto pto2 = new Puesto("Peaje Colonia", "Ruta 1 km 120");
@@ -87,7 +83,6 @@ public class ObligatorioDaApplication {
 			fachada.agregar(new Bonificacion("Frecuentes"));
 			fachada.agregar(new Bonificacion("Trabajadores"));
 
-            // ================================================================
 			//ASIGNACIONES DE BONIFICACIONES A PROPIETARIOS
 			try {
 				fachada.asignarBonificacion("234", "Frecuentes",   "Peaje Pando");
@@ -101,7 +96,6 @@ public class ObligatorioDaApplication {
 					+ p111.getBonificacionesAsignadas().size());
 
 				
-			// ===============================================================
 			//PRECARGA DE TRÁNSITOS (Frecuentes en Pando) 
 			LocalDate hoy = LocalDate.now();
 

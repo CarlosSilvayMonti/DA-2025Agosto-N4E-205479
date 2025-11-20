@@ -26,7 +26,6 @@ public class ControladorAdminBonificaciones {
         this.fachada = FachadaServicios.getInstancia();
     }
 
-    // 1) Inicializar vista: listas de bonificaciones y puestos
     @PostMapping("/vistaConectada")
     public List<Respuesta> vistaConectada(
         @SessionAttribute(name = "usuarioLogueado", required = false) Usuario usuario) {
@@ -53,7 +52,6 @@ public class ControladorAdminBonificaciones {
         );
     }
 
-    // 2) Buscar propietario por cédula
     @PostMapping("/buscarPropietario")
     public List<Respuesta> buscarPropietario(
         @SessionAttribute(name = "usuarioLogueado", required = false) Usuario usuario,
@@ -80,7 +78,6 @@ public class ControladorAdminBonificaciones {
         }
     }
 
-    // 3) Asignar bonificación
     @PostMapping("/asignar")
     public List<Respuesta> asignar(
         @SessionAttribute(name = "usuarioLogueado", required = false) Usuario usuario,
@@ -104,7 +101,6 @@ public class ControladorAdminBonificaciones {
 
             fachada.asignarBonificacion(cedula, nombreBonificacion, nombrePuesto);
 
-            // refresco datos del propietario
             PropietarioDto dto = fachada.obtenerTableroPropietario(cedula);
 
             return Respuesta.lista(

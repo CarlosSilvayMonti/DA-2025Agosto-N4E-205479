@@ -18,7 +18,6 @@ public class ServicioPuestos {
             throw new PeajeException("El puesto no puede ser nulo");
         }
 
-        // Evitar duplicados (por nombre, por ejemplo)
         for (Puesto p : puestos) {
             if (p.getNombre().equalsIgnoreCase(puesto.getNombre())) {
                 throw new PeajeException("Ya existe un puesto con el nombre: " + puesto.getNombre());
