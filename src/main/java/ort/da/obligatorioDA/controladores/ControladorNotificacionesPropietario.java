@@ -35,8 +35,9 @@ public class ControladorNotificacionesPropietario implements Observador {
     public ControladorNotificacionesPropietario(ConexionNavegador conexion) {
         this.fachada  = FachadaServicios.getInstancia();
         this.conexion = conexion;
-
         this.sNotificaciones = fachada.getServicioNotificaciones();
+        
+        System.out.println("[ControladorNotificacionesPropietario] suscribiendo observador...");
         this.sNotificaciones.suscribir(this);
     }
 
@@ -50,9 +51,11 @@ public class ControladorNotificacionesPropietario implements Observador {
         }
 
         cedulaActual = prop.getCedula();
+        System.out.println("[ControladorNotificacionesPropietario] registrarSSE para " + cedulaActual);
+
         conexion.conectarSSE();
 
-        // Estado inicial de notificaciones
+        // Estado de notificaciones
         var notis = fachada.notificacionesDePropietario(cedulaActual);
         conexion.enviarJSON(Respuesta.lista(
                 new Respuesta("notificaciones", notis)
@@ -63,6 +66,8 @@ public class ControladorNotificacionesPropietario implements Observador {
 
     @Override
     public void actualizar(Observable origen, Object evento) {
+        System.out.println("[ControladorNotificacionesPropietario] actualizar() evento=" 
+                           + evento + " cedulaActual=" + cedulaActual);
         if (evento == Observador.Evento.NOTIFICACIONES_ACTUALIZADAS && cedulaActual != null) {
             var notis = fachada.notificacionesDePropietario(cedulaActual);
             conexion.enviarJSON(Respuesta.lista(
