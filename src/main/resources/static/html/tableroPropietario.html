@@ -101,12 +101,13 @@
 
         function mostrar_notificaciones(lista) {
             const cont = document.getElementById("contenedorNotificaciones");
-            if (!lista || lista.length === 0) {
+            if (!Array.isArray(lista) || lista.length === 0) {
             cont.innerHTML = "<p>No hay notificaciones.</p>";
             return;
             }
             cont.innerHTML = crearTablaDesdeJson(lista);
         }
+
 
         async function borrarNotificaciones() {
             const confirmar = await mostrarConfirmacion("¿Desea borrar todas las notificaciones?");

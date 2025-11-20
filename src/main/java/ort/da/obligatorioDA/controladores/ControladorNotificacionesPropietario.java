@@ -1,14 +1,13 @@
 package ort.da.obligatorioDA.controladores;
 
-import jakarta.servlet.http.HttpSession;
-import java.util.List;
-
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import ort.da.obligatorioDA.modelo.UsuPorpietario;
@@ -16,60 +15,63 @@ import ort.da.obligatorioDA.observador.Observador;
 import ort.da.obligatorioDA.observador.Observable;
 import ort.da.obligatorioDA.servicios.fachada.FachadaServicios;
 import ort.da.obligatorioDA.servicios.ServicioNotificaciones;
-import ort.da.obligatorioDA.dtos.EventoNotificacionesDto;
-import ort.da.obligatorioDA.dtos.NotificacionDto;
+import ort.da.obligatorioDA.excepciones.PeajeException;
 import ort.da.obligatorioDA.utils.ConexionNavegador;
 import ort.da.obligatorioDA.utils.Respuesta;
 
+import java.util.List;
+
 @RestController
-@Scope("session")
 @RequestMapping("/propietarios")
+@Scope("session")
 public class ControladorNotificacionesPropietario implements Observador {
 
+    private final FachadaServicios fachada;
     private final ConexionNavegador conexion;
-    private final HttpSession httpSession;
-    private final ServicioNotificaciones servicioNotificaciones;
+    private final ServicioNotificaciones sNotificaciones;
 
-    public ControladorNotificacionesPropietario(ConexionNavegador conexion,
-                                                HttpSession httpSession) {
-        this.conexion = conexion;
-        this.httpSession = httpSession;
+    private String cedulaActual; 
 
-        // ✅ Usamos SIEMPRE la instancia única desde la fachada
-        this.servicioNotificaciones =
-                FachadaServicios.getInstancia().getServicioNotificaciones();
+    public ControladorNotificacionesPropietario(
+            ConexionNavegador conexion,
+            ServicioNotificaciones sNotificaciones) {
 
-        // ✅ Nos suscribimos a los eventos (patrón Observador)
-        this.servicioNotificaciones.suscribir(this);
+        this.fachada         = FachadaServicios.getInstancia();
+        this.conexion        = conexion;
+        this.sNotificaciones = sNotificaciones;
+
+        // Me suscribo al servicio
+        this.sNotificaciones.suscribir(this);
     }
 
-    // SSE para esta sesión de propietario
     @GetMapping(value = "/registroSSE", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter registrarSSE() {
+    public SseEmitter registrarSSE(
+        @SessionAttribute(name = "usuarioLogueado", required = false) UsuPorpietario prop
+    ) throws PeajeException {
+
+        if (prop == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+
+        cedulaActual = prop.getCedula();
         conexion.conectarSSE();
+
+        // Estado inicial de notificaciones
+        var notis = fachada.notificacionesDePropietario(cedulaActual);
+        conexion.enviarJSON(Respuesta.lista(
+                new Respuesta("notificaciones", notis)
+        ));
+
         return conexion.getConexionSSE();
     }
 
     @Override
     public void actualizar(Observable origen, Object evento) {
-        // Acá depende cómo modelaste el "evento", 
-        // te doy una versión simple: nueva lista de notificaciones del propietario.
-        if (!(evento instanceof EventoNotificacionesDto ev)) { // tu tipo de evento
-            return;
+        if (evento == Observador.Evento.NOTIFICACIONES_ACTUALIZADAS && cedulaActual != null) {
+            var notis = fachada.notificacionesDePropietario(cedulaActual);
+            conexion.enviarJSON(Respuesta.lista(
+                    new Respuesta("notificaciones", notis)
+            ));
         }
-
-        UsuPorpietario enSesion =
-                (UsuPorpietario) httpSession.getAttribute("usuarioLogueado");
-
-        if (enSesion == null) return;
-        if (!enSesion.getCedula().equals(ev.getCedula())) return;
-
-        List<NotificacionDto> notifs = ev.getNotificaciones();
-
-        var respuesta = Respuesta.lista(
-            new Respuesta("notificaciones", notifs)
-        );
-
-        conexion.enviarJSON(respuesta);
     }
 }

@@ -10,16 +10,13 @@ import ort.da.obligatorioDA.modelo.EstadoPropietario;
 import ort.da.obligatorioDA.modelo.Notificacion;
 import ort.da.obligatorioDA.modelo.UsuPorpietario;
 import ort.da.obligatorioDA.observador.Observable;
-
-import java.util.stream.Collectors;
-import ort.da.obligatorioDA.dtos.EventoNotificacionesDto;
-import ort.da.obligatorioDA.dtos.NotificacionDto;
-
+import ort.da.obligatorioDA.observador.Observador;
 
 public class ServicioNotificaciones extends Observable {
 
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
+    // 🔔 Notificación por tránsito
     public void registrarNotificacionTransito(UsuPorpietario propietario,
             String nombrePuesto,
             String matriculaVehiculo,
@@ -33,8 +30,12 @@ public class ServicioNotificaciones extends Observable {
 
         propietario.getNotificaciones().add(
                 new Notificacion(fechaHora, mensaje));
+
+        // 👇 Avisar a los observadores que cambiaron notificaciones
+        notificar(Observador.Evento.NOTIFICACIONES_ACTUALIZADAS);
     }
 
+    // 🔔 Notificación por saldo bajo
     public void registrarNotificacionSaldoBajo(UsuPorpietario propietario,
             double saldoActual,
             LocalDateTime fechaHora) {
@@ -46,29 +47,32 @@ public class ServicioNotificaciones extends Observable {
 
         propietario.getNotificaciones().add(
                 new Notificacion(fechaHora, mensaje));
+
+        // 👇 También dispara evento
+        notificar(Observador.Evento.NOTIFICACIONES_ACTUALIZADAS);
     }
 
-    public void registrarNotificacionCambioEstado(UsuPorpietario propietario, EstadoPropietario nuevoEstado) {
+    // 🔔 Notificación por cambio de estado
+    public void registrarNotificacionCambioEstado(UsuPorpietario propietario,
+                                                  EstadoPropietario nuevoEstado) {
+
         if (propietario == null || nuevoEstado == null) return;
 
-        String mensaje = "Se ha cambiado tu estado en el sistema. Tu estado actual es " + nuevoEstado;
-        Notificacion n = new Notificacion(LocalDateTime.now(), mensaje);
-        propietario.getNotificaciones().add(n);
+        LocalDateTime ahora = LocalDateTime.now();
 
-        // Construyo la lista actualizada de notificaciones como DTOs
-        List<NotificacionDto> listaDto = propietario.getNotificaciones()
-                .stream()
-                .sorted(Comparator.comparing(Notificacion::getFechaHora).reversed())
-                .map(NotificacionDto::new)
-                .collect(Collectors.toList());
+        String mensaje = FMT.format(ahora)
+                + " - Se ha cambiado tu estado en el sistema. Tu estado actual es "
+                + nuevoEstado;
 
-        // Creo el evento
-        EventoNotificacionesDto evento = new EventoNotificacionesDto(propietario.getCedula(), listaDto);
+        propietario.getNotificaciones().add(
+                new Notificacion(ahora, mensaje)
+        );
 
-        // Aviso a los observadores
-        notificar(evento);
+        // 👇 Ya lo tenías bien
+        notificar(Observador.Evento.NOTIFICACIONES_ACTUALIZADAS);
     }
 
+    // Obtener ordenadas desc por fecha/hora
     public List<Notificacion> obtenerNotificaciones(UsuPorpietario propietario) {
         return propietario.getNotificaciones()
                 .stream()
@@ -76,11 +80,16 @@ public class ServicioNotificaciones extends Observable {
                 .collect(Collectors.toList());
     }
 
+    // Borrar todas – devuelve true si había alguna
     public boolean borrarNotificaciones(UsuPorpietario propietario) {
         if (propietario.getNotificaciones().isEmpty()) {
             return false;
         }
         propietario.getNotificaciones().clear();
+
+        // 👇 También avisamos que cambió la lista
+        notificar(Observador.Evento.NOTIFICACIONES_ACTUALIZADAS);
+
         return true;
     }
 }
